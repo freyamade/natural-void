@@ -1,15 +1,26 @@
 var path = require('path')
 var webpack = require('webpack')
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
     entry: '.src/index.ts',
     output: {
         path: path.resolve(__dirname, './dist'),
         publicPath: '/dist/',
-        filename: 'build.js'
+        filename: 'js/bundle.js'
     },
     module: {
         rules: [
+            {
+                test: /\.scss$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        'css-loader',
+                        'sass-loader'
+                    ]
+                })
+            },
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
@@ -38,6 +49,9 @@ module.exports = {
             }
         ]
     },
+    plugins: [
+        new ExtractTextPlugin('css/style.css'),
+    ]
     resolve: {
         extensions: ['.ts', '.js', '.vue', '.json'],
         alias: {
