@@ -1,5 +1,5 @@
 # natural-void
-A podcast site specifically for the ExVo D&amp;D games. Made with Django, Bulma, Vue.js and &lt;3
+A podcast site specifically for the ExVo D&amp;D games. Made with Go, Bulma, Vue.js and &lt;3
 
 ## Colour Schemes
 I want to update the colour schemes to match the scheme of the Chapter that the party are on.
