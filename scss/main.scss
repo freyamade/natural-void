@@ -1,14 +1,17 @@
 
 @charset "utf-8";
+// Import google fonts
+@import url('https://fonts.googleapis.com/css?family=Crimson+Text');
 
 // Customization
 
 // You can easily customize Bulma with your own variables.
 // Just uncomment the following block to see the result.
 
-/*
+
 // 1. Import the initial variables
 @import "../node_modules/bulma/sass/utilities/initial-variables";
+
 // 2. Set your own initial variables
 // Update the blue shade, used for links
 $blue: #06bcef;
@@ -16,12 +19,28 @@ $blue: #06bcef;
 $pink: #ff8080;
 $pink-invert: #fff;
 // Update the sans-serif font family
-$family-sans-serif: "Helvetica", "Arial", sans-serif;
-// 3. Set the derived variables
-// Use the new pink as the primary color
-$primary: $pink;
-$primary-invert: $pink-invert;
-// 4. Import the rest of Bulma
-*/
+$family-sans-serif: "Crimson Text", serif;
 
+// 3. Set the theme colours
+$light-shade: #B9ADA9;
+$light-accent: #656993;
+$main-brand: #2C0047;
+$dark-accent: #600;
+$dark-shade: #1A141D;
+
+@import "../node_modules/bulma/sass/utilities/derived-variables";
+$custom-colors: (
+    "light-shade": ($light-shade, $dark-shade),
+    "light-accent": ($light-accent, $dark-shade),
+    "main-brand": ($main-brand, $light-shade),
+    "dark-accent": ($dark-accent, $light-shade),
+    "dark-shade": ($dark-shade, $light-shade),
+);
+
+// 4. Set the derived variables
+// Use the new pink as the primary color
+$primary: $main-brand;
+$primary-invert: $light-shade;
+
+// 6. Import the rest of Bulma
 @import "../node_modules/bulma/bulma";
