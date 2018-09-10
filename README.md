@@ -13,6 +13,9 @@ I come up with 2-tone colour schemes for each Chapter, plug those into https://c
 - Dread
   - B9ADA9
   - 656993
-  - 2C0047
-  - 660000
+  - 2C0047  # Main Purple
+  - 660000  # Main Red
   - 1A141D
+
+# Wavelength for player
+The wavelength player tool is provided by https://www.npmjs.com/package/waveplayer. This will also be styled using the main colours of the theme.
