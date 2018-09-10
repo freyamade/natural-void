@@ -3,7 +3,7 @@ var webpack = require('webpack')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
-    entry: '.src/index.ts',
+    entry: './src/index.ts',
     output: {
         path: path.resolve(__dirname, './dist'),
         publicPath: '/dist/',
@@ -51,7 +51,7 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('css/style.css'),
-    ]
+    ],
     resolve: {
         extensions: ['.ts', '.js', '.vue', '.json'],
         alias: {
