@@ -8,6 +8,9 @@
 // You can easily customize Bulma with your own variables.
 // Just uncomment the following block to see the result.
 
+html, body {
+    height: 100%;
+}
 
 // 1. Import the initial variables
 @import "../node_modules/bulma/sass/utilities/initial-variables";
@@ -35,16 +38,31 @@ $custom-colors: (
     "dark-accent": ($dark-accent, $light-shade),
     "dark-shade": ($dark-shade, $light-shade),
 );
+
+// Set the other derived variables
+$primary: #2c0047;
+$primary-invert: $light-shade;
+$info: #19141d;
+$info-invert: $light-shade;
+$success: #427a4d;
+$success-invert: $light-shade;
+$warning: #c06a15;
+$warning-invert: $light-shade;
+$danger: #f44336;
+$danger-invert: $white;
+
 @import "../node_modules/bulma/sass/utilities/_all";
 
 $colors: mergeColorMaps(("white": ($white, $black), "black": ($black, $white), "light": ($light, $light-invert), "dark": ($dark, $dark-invert), "primary": ($primary, $primary-invert), "link": ($link, $link-invert), "info": ($info, $info-invert), "success": ($success, $success-invert), "warning": ($warning, $warning-invert), "danger": ($danger, $danger-invert)), $custom-colors);
 $shades: mergeColorMaps(("black-bis": $black-bis, "black-ter": $black-ter, "grey-darker": $grey-darker, "grey-dark": $grey-dark, "grey": $grey, "grey-light": $grey-light, "grey-lighter": $grey-lighter, "white-ter": $white-ter, "white-bis": $white-bis), $custom-shades);
 
-
-// 4. Set the derived variables
-// Use the new pink as the primary color
-$primary: $main-brand;
-$primary-invert: $light-shade;
-
 // 6. Import the rest of Bulma
 @import "../node_modules/bulma/bulma";
+
+// Extra stuff
+svg.is-main-brand {
+    fill: $light-shade;
+}
+.navbar-item.title {
+    margin: 0;
+}
