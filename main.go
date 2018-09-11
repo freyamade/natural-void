@@ -1,25 +1,16 @@
 package main
 
 import (
+    "./go"
     "net/http"
     "strings"
     "html/template"
     "github.com/go-chi/chi"
 )
 
-type StoryData struct {
-    Name string
-    ShortName string
-    Slug string
-    Description []string
-}
-type IndexData struct {
-    Stories []StoryData
-}
-
 func main() {
     // Define a test StoryData slice
-    stories := []StoryData{{
+    stories := []naturalvoid.StoryData{{
         Name: "A Simple Trip to Waterdeep: Dread",
         ShortName: "ASTTW: Dread",
         Slug: "asttw-dread",
@@ -37,7 +28,7 @@ func main() {
             "After freeing themselves from the fog and getting back on the road, more weird scenarios begin to unfold.",
         },
     }}
-    data := IndexData{
+    data := naturalvoid.IndexData{
         Stories: stories,
     }
     r := chi.NewRouter()
