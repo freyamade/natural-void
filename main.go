@@ -7,14 +7,46 @@ import (
     "github.com/go-chi/chi"
 )
 
+type StoryData struct {
+    Name string
+    ShortName string
+    Slug string
+    Description []string
+}
+type IndexData struct {
+    Stories []StoryData
+}
+
 func main() {
+    // Define a test StoryData slice
+    stories := []StoryData{{
+        Name: "A Simple Trip to Waterdeep: Dread",
+        ShortName: "ASTTW: Dread",
+        Slug: "asttw-dread",
+        Description: []string{
+            "Chapter 1 of our 5 chapter epic which follows our heroes Bran, Gundham, Lyra, Jake, and Viper on their respective trips to Waterdeep.",
+            "During one night of particularly heavy fog, these five people and their coach driver get taken to the land of Barovia, ruled by Strahd von Zarovich.",
+            "Will this group of 5 strangers be able to band together, overcome this situation and rescue their coach driver? Only time will tell.",
+        },
+    }, {
+        Name: "A Simple Trip to Waterdeep: Reminiscence",
+        ShortName: "ASTTW: Reminiscence",
+        Slug: "asttw-reminiscence",
+        Description: []string{
+            "Chapter 2 of our 5 chapter epic which follows our heroes Bran, Gundham, Lyra, Jake, and Viper on their respective trips to Waterdeep.",
+            "After freeing themselves from the fog and getting back on the road, more weird scenarios begin to unfold.",
+        },
+    }}
+    data := IndexData{
+        Stories: stories,
+    }
     r := chi.NewRouter()
     r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-        tmpl, err := template.ParseFiles("templates/index.html")
+        tmpl, err := template.ParseFiles("templates/index.tmpl")
         if err != nil {
             panic(err)
         }
-        tmpl.Execute(w, nil)
+        tmpl.Execute(w, data)
     })
     // Serve the static files
     FileServer(r, "/static", http.Dir("./static"))
