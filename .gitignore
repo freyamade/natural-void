@@ -3,5 +3,4 @@
 # TS
 node_modules
 built
-dist/css
-dist/js
+static
