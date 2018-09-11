@@ -10,7 +10,7 @@
 
 html, body {
     height: 100%;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 // 1. Import the initial variables
@@ -70,4 +70,7 @@ svg.is-main-brand {
 .content-title {
     border-bottom: 2px solid $dark-accent;
     display: inline-block;
+}
+.is-removed {
+    display: none;
 }
