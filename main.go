@@ -1,7 +1,6 @@
 package main
 
 import (
-	"html/template"
 	"net/http"
 	"strings"
 
@@ -39,11 +38,11 @@ func main() {
 	}
 	r := chi.NewRouter()
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, err := template.ParseFiles("templates/index.tmpl")
+		tmpl, err := naturalvoid.ParseTemplatesInDir("templates")
 		if err != nil {
 			panic(err)
 		}
-		tmpl.Execute(w, data)
+		tmpl.ExecuteTemplate(w, "index.tmpl", &data)
 	})
 	// Serve the static files
 	FileServer(r, "/static", http.Dir("./static"))
