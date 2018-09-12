@@ -8,11 +8,6 @@
 // You can easily customize Bulma with your own variables.
 // Just uncomment the following block to see the result.
 
-html, body {
-    height: 100%;
-    font-size: 18px;
-}
-
 // 1. Import the initial variables
 @import "../node_modules/bulma/sass/utilities/initial-variables";
 
@@ -63,6 +58,10 @@ $shades: mergeColorMaps(("black-bis": $black-bis, "black-ter": $black-ter, "grey
 @import "../node_modules/bulma/bulma";
 
 // Extra stuff
+html, body {
+    height: 100%;
+    overflow-y: auto;
+}
 svg.is-scheme-primary {
     fill: $scheme-primary-invert;
 }
