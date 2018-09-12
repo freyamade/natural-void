@@ -8,5 +8,3 @@ Made with Go, Bulma, TypeScript and &lt;3
 # Wavelength for player
 The wavelength player tool is provided by https://www.npmjs.com/package/waveplayer. This will also be styled using the main colours of the (chosen) theme.
 
-# Spoilers
-![spoiler image](https://cdn.discordapp.com/attachments/402183402608132096/489119542589521921/natural-void-spoiler.png)
