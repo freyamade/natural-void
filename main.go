@@ -12,25 +12,14 @@ import (
 )
 
 func main() {
-	// Define a test Story slice
-	stories := []naturalvoid.Story{{
-		Name:      "A Simple Trip to Waterdeep: Dread",
-		ShortName: "ASTTW: Dread",
-		Slug:      "asttw-dread",
-		Description: []string{
-			"Chapter 1 of our 5 chapter epic which follows our heroes Bran, Gundham, Lyra, Jake, and Viper on their respective trips to Waterdeep.",
-			"During one night of particularly heavy fog, these five people and their coach driver get taken to the land of Barovia, ruled by Strahd von Zarovich.",
-			"Will this group of 5 strangers be able to band together, overcome this situation and rescue their coach driver? Only time will tell.",
-		},
-	}, {
-		Name:      "A Simple Trip to Waterdeep: Reminiscence",
-		ShortName: "ASTTW: Reminiscence",
-		Slug:      "asttw-reminiscence",
-		Description: []string{
-			"Chapter 2 of our 5 chapter epic which follows our heroes Bran, Gundham, Lyra, Jake, and Viper on their respective trips to Waterdeep.",
-			"After freeing themselves from the fog and getting back on the road, more weird scenarios begin to unfold.",
-		},
-	}}
+	dao := naturalvoid.DAO{}
+	err := dao.New()
+	if err != nil {
+		panic(err)
+	}
+	// Get the list of Stories from the DB
+	stories := []naturalvoid.Story{}
+	dao.DB.Find(&stories)
 	data := struct {
 		Stories []naturalvoid.Story
 	}{
