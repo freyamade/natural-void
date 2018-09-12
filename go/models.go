@@ -1,6 +1,7 @@
 package naturalvoid
 
 import (
+	"github.com/lib/pq"
 	"github.com/jinzhu/gorm"
 )
 
@@ -9,28 +10,29 @@ import (
 // Users come from LDAP so this just stores some information for mapping stories to their DMs
 type User struct {
 	gorm.Model
-	ID int
+	Stories  []Story
+	UserName string
 }
 
 // A story is a collection of episodes
 // ASTTW Chapter 1 is a story, as well as Delve Into Delirium
 type Story struct {
 	gorm.Model
-	Description []string
-	DM          User
-	ID          int
+	Description pq.StringArray `gorm:"type:text[]"`
+	Episodes    []Episode
 	Name        string
 	ShortName   string
 	Slug        string
+	UserID      uint
 }
 
 // An Episode relates to a recorded file.
 // Episodes are mapped to a Story for obvious reasons.
 type Episode struct {
 	gorm.Model
-	Description []string
+	Description pq.StringArray `gorm:"type:text[]"`
 	Name        string
 	Number      int
 	Path        string
-	Story       Story
+	StoryID     uint
 }
