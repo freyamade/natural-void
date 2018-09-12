@@ -1,15 +1,19 @@
 package main
 
 import (
-	"./go"
-	"github.com/go-chi/chi"
 	"html/template"
 	"net/http"
 	"strings"
+
+	"github.com/gorilla/context"
+	// "github.com/gorilla/sessions"
+	"github.com/go-chi/chi"
+
+	"./go"
 )
 
 func main() {
-	// Define a test StoryData slice
+	// Define a test Story slice
 	stories := []naturalvoid.Story{{
 		Name:      "A Simple Trip to Waterdeep: Dread",
 		ShortName: "ASTTW: Dread",
@@ -28,11 +32,11 @@ func main() {
 			"After freeing themselves from the fog and getting back on the road, more weird scenarios begin to unfold.",
 		},
 	}}
-	data := struct{
+	data := struct {
 		Stories []naturalvoid.Story
 	}{
-        Stories: stories,
-    }
+		Stories: stories,
+	}
 	r := chi.NewRouter()
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		tmpl, err := template.ParseFiles("templates/index.tmpl")
@@ -43,7 +47,7 @@ func main() {
 	})
 	// Serve the static files
 	FileServer(r, "/static", http.Dir("./static"))
-	http.ListenAndServe(":3333", r)
+	http.ListenAndServe(":3333", context.ClearHandler(r))
 }
 
 // FileServer conveniently sets up a http.FileServer handler to serve
