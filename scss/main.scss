@@ -16,31 +16,17 @@ html, body {
 // 1. Import the initial variables
 @import "../node_modules/bulma/sass/utilities/initial-variables";
 
-// 2. Set your own initial variables
-// Update the blue shade, used for links
-$blue: #06bcef;
-// Add pink and its invert
-$pink: #ff8080;
-$pink-invert: #fff;
 // Update the sans-serif font family
 $family-sans-serif: "Crimson Text", serif;
 
-// 3. Set the theme colours
+// EDIT STARTS HERE
 $light-shade: #B9ADA9;
 $light-accent: #656993;
 $main-brand: #2C0047;
 $dark-accent: #600;
 $dark-shade: #1A141D;
 
-$custom-colors: (
-    "light-shade": ($light-shade, $dark-shade),
-    "light-accent": ($light-accent, $dark-shade),
-    "main-brand": ($main-brand, $light-shade),
-    "dark-accent": ($dark-accent, $light-shade),
-    "dark-shade": ($dark-shade, $light-shade),
-);
-
-// Set the other derived variables
+// Set the other derived variables (these come from colourmind as well)
 $primary: #2c0047;
 $primary-invert: $light-shade;
 $info: #19141d;
@@ -52,23 +38,39 @@ $warning-invert: $light-shade;
 $danger: #f44336;
 $danger-invert: $white;
 
+// As the second colour of the scheme might be in different places depending on the theme, I'm gonna do this too
+$scheme-primary: $main-brand;
+$scheme-primary-invert: $light-shade;
+$scheme-secondary: $dark-accent;
+$scheme-secondary-invert: $light-shade;
+// EDIT ENDS HERE
+
+$custom-colors: (
+    "light-shade": ($light-shade, $dark-shade),
+    "light-accent": ($light-accent, $dark-shade),
+    "main-brand": ($main-brand, $light-shade),
+    "dark-accent": ($dark-accent, $light-shade),
+    "dark-shade": ($dark-shade, $light-shade),
+    "scheme-primary": ($scheme-primary, $scheme-primary-invert),
+    "scheme-secondary": ($scheme-secondary, $scheme-secondary-invert),
+);
+
 @import "../node_modules/bulma/sass/utilities/_all";
 
 $colors: mergeColorMaps(("white": ($white, $black), "black": ($black, $white), "light": ($light, $light-invert), "dark": ($dark, $dark-invert), "primary": ($primary, $primary-invert), "link": ($link, $link-invert), "info": ($info, $info-invert), "success": ($success, $success-invert), "warning": ($warning, $warning-invert), "danger": ($danger, $danger-invert)), $custom-colors);
 $shades: mergeColorMaps(("black-bis": $black-bis, "black-ter": $black-ter, "grey-darker": $grey-darker, "grey-dark": $grey-dark, "grey": $grey, "grey-light": $grey-light, "grey-lighter": $grey-lighter, "white-ter": $white-ter, "white-bis": $white-bis), $custom-shades);
 
-// 6. Import the rest of Bulma
 @import "../node_modules/bulma/bulma";
 
 // Extra stuff
-svg.is-main-brand {
-    fill: $light-shade;
+svg.is-scheme-primary {
+    fill: $scheme-primary-invert;
 }
 .navbar-item.title {
     margin: 0;
 }
 .content-title {
-    border-bottom: 2px solid $dark-accent;
+    border-bottom: 2px solid $scheme-secondary;
     display: inline-block;
 }
 .is-removed {

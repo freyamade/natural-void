@@ -1,7 +1,7 @@
 {{template "layout" .}}
 {{define "content"}}
 <section id="story-natural-void" class="container has-text-centered">
-  <h2 class="title is-main-brand content-title">
+  <h2 class="title is-scheme-primary content-title">
     Natural Void
   </h2>
   <p>A D&amp;D podcast by the people of Exceptional Void, for the people of Exceptional Void.</p>
@@ -11,7 +11,7 @@
 <!-- Autogen -->
 {{range .Stories}}
 <section id="story-{{.Slug}}" class="container has-text-centered is-removed">
-  <h2 class="title is-main-brand content-title">
+  <h2 class="title is-scheme-primary content-title">
     {{.Name}}
   </h2>
   {{range .Description}}
