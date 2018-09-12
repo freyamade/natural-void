@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// Define a test StoryData slice
-	stories := []naturalvoid.StoryData{{
+	stories := []naturalvoid.Story{{
 		Name:      "A Simple Trip to Waterdeep: Dread",
 		ShortName: "ASTTW: Dread",
 		Slug:      "asttw-dread",
@@ -28,9 +28,11 @@ func main() {
 			"After freeing themselves from the fog and getting back on the road, more weird scenarios begin to unfold.",
 		},
 	}}
-	data := naturalvoid.IndexData{
-		Stories: stories,
-	}
+	data := struct{
+		Stories []naturalvoid.Story
+	}{
+        Stories: stories,
+    }
 	r := chi.NewRouter()
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		tmpl, err := template.ParseFiles("templates/index.tmpl")
