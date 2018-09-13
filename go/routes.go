@@ -8,6 +8,11 @@ import (
     // "github.com/gorilla/sessions"
 )
 
+type Message struct {
+    Type string
+    Text string
+}
+
 func NewRouter() (chi.Router) {
     r := chi.NewRouter()
     // Add middleware
