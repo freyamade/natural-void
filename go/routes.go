@@ -1,6 +1,7 @@
 package naturalvoid
 
 import (
+    "html/template"
     "net/http"
     "strings"
     "github.com/go-chi/chi"
@@ -9,7 +10,11 @@ import (
 
 func NewRouter() (chi.Router) {
     r := chi.NewRouter()
+    // Add middleware
+    r.Use(ensureTrailingSlash)
+    // Register the routes
     r.Get("/", Index)
+    r.Get("/login/", LoginForm)
     // Serve the static files
     fileServer(r, "/static", http.Dir("./static"))
     return r
@@ -21,17 +26,34 @@ func Index(w http.ResponseWriter, r *http.Request) {
     dao := GetDAO()
     stories := []Story{}
     dao.DB.Find(&stories)
-    data := struct {
-        Stories []Story
-    }{
-        Stories: stories,
+    data := map[string]interface {}{
+        "Stories": stories,
     }
     // Generate and parse the templates
-    tmpl, err := ParseTemplatesInDir("templates")
+    tmpl, err := template.ParseFiles("templates/layout.tmpl", "templates/index.tmpl")
     if err != nil {
         panic(err)
     }
-    tmpl.ExecuteTemplate(w, "index.tmpl", &data)
+    err = tmpl.ExecuteTemplate(w, "index.tmpl", &data)
+    if err != nil {
+        panic(err)
+    }
+}
+
+// Display a form to the User to allow them to log in
+func LoginForm(w http.ResponseWriter, r *http.Request) {
+    data := map[string]interface{} {
+        "Title": "Login",
+    }
+    // Generate and parse the templates
+    tmpl, err := template.ParseFiles("templates/layout.tmpl", "templates/login.tmpl")
+    if err != nil {
+        panic(err)
+    }
+    err = tmpl.ExecuteTemplate(w, "login.tmpl", data)
+    if err != nil {
+        panic(err)
+    }
 }
 
 // Handle logging in of a user by checking against LDAP
@@ -47,7 +69,30 @@ func Episodes(w http.ResponseWriter, r *http.Request) {}
 func Listen(w http.ResponseWriter, r *http.Request) {}
 
 // Show the page where a User who is a DM can upload an episode of a story
-func Upload(w http.ResponseWriter, r *http.Request) {}
+func UploadForm(w http.ResponseWriter, r *http.Request) {}
+
+// Handle the uploading of an Episode into the DB
+func UploadEpisode(w http.ResponseWriter, r *http.Request) {}
+
+// HELPERS
+
+// Middleware to add a trailing slash to the url if one is missing
+func ensureTrailingSlash(next http.Handler) (http.Handler) {
+    fn := func(w http.ResponseWriter, r *http.Request) {
+        var path string
+        ctx := chi.RouteContext(r.Context())
+        if ctx.RoutePath != "" {
+            path = ctx.RoutePath
+        } else {
+            path = r.URL.Path
+        }
+        if len(path) > 1 && path[len(path) - 1] != '/' {
+            ctx.RoutePath = path + "/"
+        }
+        next.ServeHTTP(w, r)
+    }
+    return http.HandlerFunc(fn)
+}
 
 // FileServer conveniently sets up a http.FileServer handler to serve
 // static files from a http.FileSystem.

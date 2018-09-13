@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="author" content="crnbrdrck" />
     <meta name="description" content="A D&amp;D podcast by the people of Exceptional Void, for the people of Exceptional Void. Come recount the tales of the stories recorded (almost) every week in our Discord server." />
-    <title>Natural Void ⚄ The Exceptional D&amp;D Podcast</title>
-    <link rel="stylesheet" href="static/css/main.css">
+    <title>Natural Void ⚄ {{if .Title}} {{.Title}} {{ else }}The Exceptional D&amp;D Podcast{{end}}</title>
+    <link rel="stylesheet" href="/static/css/main.css">
   </head>
   <body>
   <section class="hero is-scheme-primary is-fullheight">
@@ -32,10 +32,10 @@
           </div>
           <div id="nav-remainder" class="navbar-menu">
             <div class="navbar-end">
-              <a class="navbar-item" href="/stories/">
+              <a class="navbar-item {{if .Title}}{{if eq .Title "Stories"}}{{"is-active"}}{{end}}{{end}}" href="/stories/">
                 Stories
               </a>
-              <a class="navbar-item" href="/login/">
+              <a class="navbar-item {{if .Title}}{{if eq .Title "Login"}}{{"is-active"}}{{end}}{{end}}" href="/login/">
                 Login
               </a>
             </div>
@@ -44,28 +44,9 @@
       </header>
     </div>
 
-    <div class="hero-body">
-      {{block "content" .}}{{end}}
-    </div>
-
-    <div class="hero-foot">
-      <nav class="tabs is-boxed is-fullwidth">
-        <div class="container">
-          <ul>
-            <li class="is-active">
-              <a href="#natural-void" data-target="story-natural-void">Natural Void</a>
-            </li>
-            {{range .Stories}}
-            <li>
-              <a href="#{{.Slug}}" data-target="story-{{.Slug}}">{{.ShortName}}</a>
-            </li>
-            {{end}}
-          </ul>
-        </div>
-      </nav>
-    </div>
+    {{block "content" .}}{{end}}
   </section>
-  <script defer src="static/js/bundle.js"></script>
+  <script defer src="/static/js/bundle.js"></script>
   </body>
 </html>
 {{end}}
