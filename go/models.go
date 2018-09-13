@@ -1,8 +1,8 @@
 package naturalvoid
 
 import (
-	"github.com/lib/pq"
 	"github.com/jinzhu/gorm"
+	"github.com/lib/pq"
 )
 
 // DB Models

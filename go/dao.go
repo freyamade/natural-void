@@ -1,9 +1,9 @@
 package naturalvoid
 
 import (
-	"sync"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"sync"
 )
 
 type DAO struct {
@@ -13,7 +13,7 @@ type DAO struct {
 var instance *DAO
 var once sync.Once
 
-func GetDAO() (*DAO) {
+func GetDAO() *DAO {
 	once.Do(func() {
 		instance = &DAO{}
 		err := instance.new()
@@ -24,14 +24,14 @@ func GetDAO() (*DAO) {
 	return instance
 }
 
-func (dao *DAO) new() (error) {
+func (dao *DAO) new() error {
 	// Initialize a new DAO object
 	db, err := gorm.Open("postgres", "host=localhost port=5432 user=postgres dbname=postgres sslmode=disable")
 	if err != nil {
 		return err
 	}
 	dao.DB = db
-    return nil
+	return nil
 }
 
 func (dao *DAO) Close() {

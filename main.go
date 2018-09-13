@@ -1,14 +1,12 @@
 package main
 
 import (
-	"net/http"
-	"github.com/gorilla/context"
 	"./go"
+	"github.com/gorilla/context"
+	"net/http"
 )
 
 func main() {
 	r := naturalvoid.NewRouter()
 	http.ListenAndServe(":3333", context.ClearHandler(r))
 }
-
-
