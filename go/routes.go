@@ -8,7 +8,7 @@ import (
     // "github.com/gorilla/sessions"
 )
 
-type Message struct {
+type message struct {
     Type string
     Text string
 }
@@ -20,6 +20,7 @@ func NewRouter() (chi.Router) {
     // Register the routes
     r.Get("/", Index)
     r.Get("/login/", LoginForm)
+    r.Post("/login/", Login)
     // Serve the static files
     fileServer(r, "/static", http.Dir("./static"))
     return r
@@ -62,7 +63,27 @@ func LoginForm(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handle logging in of a user by checking against LDAP
-func Login(w http.ResponseWriter, r *http.Request) {}
+func Login(w http.ResponseWriter, r *http.Request) {
+    // For now, just render the login form with the passed username
+    // Attempt to parse the form
+    err := r.ParseForm()
+    if err != nil {
+        panic(err)
+    }
+    data := map[string]interface{} {
+        "Title": "Login",
+        "Username": r.Form.Get("username"),
+    }
+    // Generate and parse the templates
+    tmpl, err := template.ParseFiles("templates/layout.tmpl", "templates/login.tmpl")
+    if err != nil {
+        panic(err)
+    }
+    err = tmpl.ExecuteTemplate(w, "login.tmpl", data)
+    if err != nil {
+        panic(err)
+    }
+}
 
 // Handle logging out of a logged in user
 func Logout(w http.ResponseWriter, r *http.Request) {}
