@@ -6,5 +6,6 @@ built
 static
 
 # Other
-episodes/**/*
+# episodes/**/*
 !episodes/.keep
+!episodes/1/*
