@@ -8,3 +8,7 @@ Made with Go, Bulma, TypeScript and &lt;3
 # Wavelength for player
 The wavelength player tool is provided by https://www.npmjs.com/package/waveplayer. This will also be styled using the main colours of the (chosen) theme.
 
+## wav2json
+[wav2json](https://github.com/beschulz/wav2json) needs to be installed on the machine you are running the server from (it's installed in the Dockerfile anyway).
+
+This is because waveplayer requires JSON metadata about the file to draw the chart without doing analysis.
