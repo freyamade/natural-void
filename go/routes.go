@@ -21,6 +21,8 @@ func NewRouter() chi.Router {
 	r.Get("/", Index)
 	r.Get("/login/", LoginForm)
 	r.Post("/login/", Login)
+
+	r.Get("/listen/", Listen)
 	// Serve the static files
 	fileServer(r, "/static", http.Dir("./static"))
 	return r
@@ -92,7 +94,34 @@ func Logout(w http.ResponseWriter, r *http.Request) {}
 func Episodes(w http.ResponseWriter, r *http.Request) {}
 
 // Show the page where the user can listen to an episode
-func Listen(w http.ResponseWriter, r *http.Request) {}
+func Listen(w http.ResponseWriter, r *http.Request) {
+	st := &Story{}
+	dao := GetDAO()
+	dao.DB.First(st)
+	ep := Episode{
+		Description: []string{
+			"The party have got themselves a house and some well deserved downtime.",
+			"What could possibly go wrong?",
+		},
+		Name: "Homestead",
+		Number: 1,
+		Path: "",
+	}
+	data := map[string]interface{}{
+		"Title": "Listen",
+		"Episode": ep,
+		"Story": st,
+	}
+	// Generate and parse the templates
+	tmpl, err := template.ParseFiles("templates/layout.tmpl", "templates/listen.tmpl")
+	if err != nil {
+		panic(err)
+	}
+	err = tmpl.ExecuteTemplate(w, "listen.tmpl", data)
+	if err != nil {
+		panic(err)
+	}
+}
 
 // Show the page where a User who is a DM can upload an episode of a story
 func UploadForm(w http.ResponseWriter, r *http.Request) {}
