@@ -7,26 +7,16 @@
       <h2 class="title">{{.Episode.Name}}</h2>
     </div>
     <p class="is-pulled-right">Episode #{{.Episode.Number}} of {{.Story.ShortName}}</p>
-    <div id="player-container"></div>
+    <div id="player-container" data-episode-id="{{.Episode.ID}}"></div>
     {{range .Episode.Description}}
     <p>{{.}}</p>
     {{end}}
   </section>
-  {{range .Stories}}
-  <section id="story-{{.Slug}}" class="container has-text-centered is-removed">
-    <h2 class="title is-scheme-primary content-title">
-      {{.Name}}
-    </h2>
-    {{range .Description}}
-      <p>{{.}}</p>
-    {{end}}
-  </section>
-  {{end}}
 </div>
 
 <!-- Use the foot to display prev and next episodes (if available) -->
 {{end}}
 
 {{define "js"}}
-<script defer src="/static/js/listen.js"></script>
+<script src="/static/js/listen.js"></script>
 {{end}}
