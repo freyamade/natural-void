@@ -4,3 +4,7 @@
 node_modules
 built
 static
+
+# Other
+episodes/**/*
+!episodes/.keep
