@@ -12,3 +12,9 @@ The wavelength player tool is provided by https://www.npmjs.com/package/waveplay
 [wav2json](https://github.com/beschulz/wav2json) needs to be installed on the machine you are running the server from (it's installed in the Dockerfile anyway).
 
 This is because waveplayer requires JSON metadata about the file to draw the chart without doing analysis.
+
+After installing the script, the following command should be run to generate the json metadata;
+
+`wav2json episode.wav --channels left right -o episode.json`
+
+That should be run in the same directory as the episode was installed into.
