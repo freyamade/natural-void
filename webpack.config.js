@@ -2,11 +2,14 @@ var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
-    entry: './typescript/index.ts',
+    entry: {
+        index: './typescript/index.ts',
+        listen: './typescript/listen.ts'
+    },
     output: {
         path: path.resolve(__dirname, './static'),
         publicPath: '/static/',
-        filename: 'js/bundle.js'
+        filename: 'js/[name].js'
     },
     module: {
         rules: [
