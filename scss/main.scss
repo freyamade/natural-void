@@ -81,3 +81,7 @@ svg.is-scheme-primary {
 .label {
     color: inherit!important;
 }
+#player-container {
+    background-color: $dark-shade;
+    min-height: 200px;
+}
