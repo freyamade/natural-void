@@ -1,6 +1,7 @@
 package naturalvoid
 
 import (
+	"github.com/jinzhu/gorm"  // Temp import until I pull episodes from the DB instead
 	"github.com/go-chi/chi"
 	"html/template"
 	"net/http"
@@ -24,7 +25,9 @@ func NewRouter() chi.Router {
 
 	r.Get("/listen/", Listen)
 	// Serve the static files
-	fileServer(r, "/static", http.Dir("./static"))
+	fileServer(r, "/static/", http.Dir("./static"))
+	// Also serve the episodes
+	fileServer(r, "/episodes/", http.Dir("./episodes"))
 	return r
 }
 
@@ -106,6 +109,7 @@ func Listen(w http.ResponseWriter, r *http.Request) {
 		Name: "Homestead",
 		Number: 1,
 		Path: "",
+		Model: gorm.Model{ID: 1},
 	}
 	data := map[string]interface{}{
 		"Title": "Listen",
