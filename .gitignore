@@ -9,3 +9,4 @@ static
 # episodes/**/*
 !episodes/.keep
 !episodes/1/*
+*.report.html

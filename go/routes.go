@@ -3,6 +3,7 @@ package naturalvoid
 import (
 	"github.com/jinzhu/gorm"  // Temp import until I pull episodes from the DB instead
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"html/template"
 	"net/http"
 	"strings"
@@ -18,6 +19,7 @@ func NewRouter() chi.Router {
 	r := chi.NewRouter()
 	// Add middleware
 	r.Use(ensureTrailingSlash)
+	r.Use(middleware.DefaultCompress)
 	// Register the routes
 	r.Get("/", Index)
 	r.Get("/login/", LoginForm)
