@@ -9,6 +9,15 @@
     </div>
     <div id="player-container" data-episode-id="{{.Episode.ID}}" class="has-text-centered">
       <progress class="amplitude-song-played-progress" amplitude-main-song-played-progress="true" id="song-played-progress" value="10" max="100"></progress>
+      <span class="is-pulled-left current-time">
+        <span class="amplitude-current-minutes" amplitude-main-current-minutes="true"></span>:<span class="amplitude-current-seconds" amplitude-main-current-seconds="true"></span>
+      </span>
+      <span class="duration is-pulled-right">
+        <span class="amplitude-duration-minutes" amplitude-main-duration-minutes="true"></span>:<span class="amplitude-duration-seconds" amplitude-main-duration-seconds="true"></span>
+      </span>
+      <div class="control-container">
+        <div class="amplitude-play-pause amplitude-paused" amplitude-main-play-pause="true" id="play-pause"></div>
+      </div>
     </div>
     {{range .Episode.Description}}
     <p>{{.}}</p>
