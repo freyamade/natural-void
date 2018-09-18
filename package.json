@@ -30,12 +30,12 @@
   },
   "homepage": "https://github.com/crnbrdrck/natural-void#readme",
   "devDependencies": {
+    "amplitudejs": "^3.3.1",
     "bulma": "^0.7.1",
     "node-sass": "^4.9.3",
     "ts-loader": "^5.1.0",
     "tslint": "^5.11.0",
     "typescript": "^3.0.3",
-    "waveplayer": "^1.2.0",
     "webpack": "^4.18.0",
     "webpack-cli": "^3.1.0"
   }
