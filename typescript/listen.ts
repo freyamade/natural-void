@@ -36,4 +36,4 @@ async function loadEpisode(): Promise<void> {
   });
 }
 
-document.addEventListener('DOMContentLoaded', loadEpisode, false)
+loadEpisode();
