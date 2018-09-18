@@ -3,7 +3,6 @@
         "outDir": "./built/",
         "sourceMap": true,
         "strict": true,
-        "noImplicitAny": false,
         "noImplicitReturns": true,
         "module": "es2015",
         "moduleResolution": "node",

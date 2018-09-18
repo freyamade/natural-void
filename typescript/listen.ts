@@ -19,10 +19,21 @@ async function loadEpisode(): Promise<void> {
   // Get the colours of the scheme
   const colours: Colours = getSchemeColours();
   Amplitude.init({
+    bindings: {
+      32: 'play_pause',
+    },
     songs: [{
       url: `/episodes/${episodeID}/episode.wav`,
     }]
-  })
+  });
+
+  // Allow for clicking to move around on the progress bar
+  document.getElementById('song-played-progress')!.addEventListener('click', (e: MouseEvent) => {
+    const elmnt = e.target as HTMLElement;
+    const offset = elmnt.getBoundingClientRect();
+    const x = e.pageX - offset.left;
+    Amplitude.setSongPlayedPercentage((x / elmnt.offsetWidth) * 100);
+  });
 }
 
 document.addEventListener('DOMContentLoaded', loadEpisode, false)
