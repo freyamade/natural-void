@@ -5,9 +5,11 @@
   <section class="container">
     <div class="is-scheme-primary listen-title">
       <h2 class="title">{{.Episode.Name}}</h2>
+      <p>Episode #{{.Episode.Number}} of {{.Story.ShortName}}</p>
     </div>
-    <p class="is-pulled-right">Episode #{{.Episode.Number}} of {{.Story.ShortName}}</p>
-    <div id="player-container" data-episode-id="{{.Episode.ID}}"></div>
+    <div id="player-container" data-episode-id="{{.Episode.ID}}" class="has-text-centered">
+      <progress class="amplitude-song-played-progress" amplitude-main-song-played-progress="true" id="song-played-progress" value="10" max="100"></progress>
+    </div>
     {{range .Episode.Description}}
     <p>{{.}}</p>
     {{end}}

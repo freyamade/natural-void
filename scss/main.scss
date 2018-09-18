@@ -82,6 +82,11 @@ svg.is-scheme-primary {
 }
 .listen-title {
     border-bottom: 2px solid $scheme-secondary;
+
+    & .title {
+        display: inline-block;
+        margin-bottom: 0;
+    }
 }
 .is-removed {
     display: none;
@@ -90,6 +95,36 @@ svg.is-scheme-primary {
     color: inherit!important;
 }
 #player-container {
-    background-color: $dark-shade;
-    min-height: 200px;
+    background-color: $scheme-primary;
+    min-height: 100px;
+}
+
+// Amplitude stuff
+progress.amplitude-song-played-progress {
+    width: 90%;
+    height: 15px;
+    background-color: $light-shade;
+    -webkit-appearance: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+    cursor: pointer;
+    border: none;
+
+    &:not([value]) {
+        background-color: $light-shade;
+    }
+
+    &::-webkit-progress-bar {
+        background-color: $light-shade;
+    }
+
+    &::-moz-progress-bar {
+        background-color: $scheme-secondary;
+    }
+
+    &::-webkit-progress-value {
+        background-color: $scheme-secondary;
+    }
 }

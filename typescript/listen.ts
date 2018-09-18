@@ -1,3 +1,5 @@
+import Amplitude from 'amplitudejs';
+
 interface Colours {
   primary: string;
   secondary: string;
@@ -16,6 +18,11 @@ async function loadEpisode(): Promise<void> {
   const episodeID = (document.querySelector('#player-container')! as HTMLElement).dataset.episodeId!;
   // Get the colours of the scheme
   const colours: Colours = getSchemeColours();
+  Amplitude.init({
+    songs: [{
+      url: `/episodes/${episodeID}/episode.wav`,
+    }]
+  })
 }
 
 document.addEventListener('DOMContentLoaded', loadEpisode, false)
