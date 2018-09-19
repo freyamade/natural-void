@@ -1,6 +1,7 @@
 package naturalvoid
 
 import (
+	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/jinzhu/gorm" // Temp import until I pull episodes from the DB instead
@@ -42,15 +43,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"Stories": stories,
 	}
-	// Generate and parse the templates
-	tmpl, err := template.ParseFiles("templates/layout.tmpl", "templates/index.tmpl")
-	if err != nil {
-		panic(err)
-	}
-	err = tmpl.ExecuteTemplate(w, "index.tmpl", &data)
-	if err != nil {
-		panic(err)
-	}
+	render(w, "index.tmpl", data)
 }
 
 // Display a form to the User to allow them to log in
@@ -58,15 +51,7 @@ func LoginForm(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"Title": "Login",
 	}
-	// Generate and parse the templates
-	tmpl, err := template.ParseFiles("templates/layout.tmpl", "templates/login.tmpl")
-	if err != nil {
-		panic(err)
-	}
-	err = tmpl.ExecuteTemplate(w, "login.tmpl", data)
-	if err != nil {
-		panic(err)
-	}
+	render(w, "login.tmpl", data)
 }
 
 // Handle logging in of a user by checking against LDAP
@@ -81,15 +66,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		"Title":    "Login",
 		"Username": r.Form.Get("username"),
 	}
-	// Generate and parse the templates
-	tmpl, err := template.ParseFiles("templates/layout.tmpl", "templates/login.tmpl")
-	if err != nil {
-		panic(err)
-	}
-	err = tmpl.ExecuteTemplate(w, "login.tmpl", data)
-	if err != nil {
-		panic(err)
-	}
+	render(w, "login.tmpl", data)
 }
 
 // Handle logging out of a logged in user
@@ -118,15 +95,7 @@ func Listen(w http.ResponseWriter, r *http.Request) {
 		"Episode": ep,
 		"Story":   st,
 	}
-	// Generate and parse the templates
-	tmpl, err := template.ParseFiles("templates/layout.tmpl", "templates/listen.tmpl")
-	if err != nil {
-		panic(err)
-	}
-	err = tmpl.ExecuteTemplate(w, "listen.tmpl", data)
-	if err != nil {
-		panic(err)
-	}
+	render(w, "listen.tmpl", data)
 }
 
 // Show the page where a User who is a DM can upload an episode of a story
@@ -136,6 +105,28 @@ func UploadForm(w http.ResponseWriter, r *http.Request) {}
 func UploadEpisode(w http.ResponseWriter, r *http.Request) {}
 
 // HELPERS
+
+// Helper to ensure necessary data is always passed to Template
+func render(w http.ResponseWriter, name string, data map[string]interface{}) {
+	// Add necessary data to data, and then render the specified template
+	style := "dread"  // Overwrite with logic to get style from session
+	// Map the style name to its theme colour
+	styleTheme := map[string]string {
+		"dread": "#2C0047",
+	}
+	data["style"] = style
+	data["theme"] = styleTheme[style]
+
+	// Generate and parse the templates
+	tmpl, err := template.ParseFiles("templates/layout.tmpl", fmt.Sprintf("templates/%s", name))
+	if err != nil {
+		panic(err)
+	}
+	err = tmpl.ExecuteTemplate(w, name, &data)
+	if err != nil {
+		panic(err)
+	}
+}
 
 // Middleware to add a trailing slash to the url if one is missing
 func ensureTrailingSlash(next http.Handler) http.Handler {
