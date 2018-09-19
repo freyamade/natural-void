@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/jinzhu/gorm" // Temp import until I pull episodes from the DB instead
 	"html/template"
 	"net/http"
 	"strings"
@@ -27,7 +26,7 @@ func NewRouter() chi.Router {
 	r.Get("/login/", LoginForm)
 	r.Post("/login/", Login)
 
-	r.Get("/listen/", Listen)
+	r.Get("/listen/{episode:\\d+}/", Listen)
 	// Serve the static files
 	fileServer(r, "/static/", http.Dir("./static"))
 	// Also serve the episodes
@@ -78,18 +77,11 @@ func Episodes(w http.ResponseWriter, r *http.Request) {}
 
 // Show the page where the user can listen to an episode
 func Listen(w http.ResponseWriter, r *http.Request) {
-	st := &Story{}
+	st := Story{}
+	ep := Episode{}
+	episodeID := chi.URLParam(r, "episode")
 	dao := GetDAO()
-	dao.DB.First(st)
-	ep := Episode{
-		Description: []string{
-			"The party have got themselves a house and some well deserved downtime.",
-			"What could possibly go wrong?",
-		},
-		Name:   "Homestead",
-		Number: 1,
-		Model:  gorm.Model{ID: 1},
-	}
+	dao.DB.Find(&ep, episodeID).Related(&st)
 	data := map[string]interface{}{
 		"Title":   "Listen",
 		"Episode": ep,
