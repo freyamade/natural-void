@@ -23,6 +23,7 @@ func NewRouter() chi.Router {
 	r.Use(middleware.DefaultCompress)
 	// Register the routes
 	r.Get("/", Index)
+	r.Get("/manifest/", Manifest)
 	r.Get("/login/", LoginForm)
 	r.Post("/login/", Login)
 
@@ -104,6 +105,12 @@ func UploadForm(w http.ResponseWriter, r *http.Request) {}
 // Handle the uploading of an Episode into the DB
 func UploadEpisode(w http.ResponseWriter, r *http.Request) {}
 
+// Generate the manifest
+func Manifest(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	render(w, "manifest.tmpl", map[string]interface{}{})
+}
+
 // HELPERS
 
 // Helper to ensure necessary data is always passed to Template
@@ -114,8 +121,8 @@ func render(w http.ResponseWriter, name string, data map[string]interface{}) {
 	styleTheme := map[string]string {
 		"dread": "#2C0047",
 	}
-	data["style"] = style
-	data["theme"] = styleTheme[style]
+	data["Style"] = style
+	data["Theme"] = styleTheme[style]
 
 	// Generate and parse the templates
 	tmpl, err := template.ParseFiles("templates/layout.tmpl", fmt.Sprintf("templates/%s", name))
