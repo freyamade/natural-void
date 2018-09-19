@@ -4,7 +4,7 @@
   "description": "Podcasts",
   "main": "src/index.ts",
   "scripts": {
-    "css-build": "node-sass sscss/ -o static/css/ --output-style compressed",
+    "css-build": "node-sass scss/ -o static/css/ --output-style compressed",
     "css-watch": "npm run css-build -- --watch",
     "build": "npm run css-build && webpack --mode production",
     "watch": "webpack --watch",
