@@ -4,7 +4,8 @@ var webpack = require('webpack')
 module.exports = {
     entry: {
         index: './typescript/index.ts',
-        listen: './typescript/listen.ts'
+        listen: './typescript/listen.ts',
+        menu: './typescript/menu.ts'
     },
     output: {
         path: path.resolve(__dirname, './static'),

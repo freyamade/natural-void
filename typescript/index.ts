@@ -1,10 +1,3 @@
-function toggleMenu() {
-  document.querySelector('.navbar-burger')!.classList.toggle('is-active');
-  document.querySelector('.navbar-menu')!.classList.toggle('is-active');
-}
-
-document.querySelector('.navbar-burger')!.addEventListener('click', toggleMenu, false);
-
 function tabChange(e: Event) {
   const tab = e.target as HTMLElement;
   // Switch the active tab and story
