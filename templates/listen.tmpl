@@ -25,7 +25,35 @@
   </section>
 </div>
 
-<!-- Use the foot to display prev and next episodes (if available) -->
+<div class="hero-foot">
+  <nav class="tabs is-boxed is-fullwidth episodes">
+    <div class="container">
+      <ul>
+        {{if .Prev.ID}}
+        <li>
+          <a href="/listen/{{.Prev.ID}}/">Prev<span class="is-hidden-touch">: {{.Prev.Name}}</span></a>
+        </li>
+        {{else}}
+        <li class="is-hidden-touch">
+          <a href="#">Prev: None</a>
+        </li>
+        {{end}}
+        <li class="is-active">
+          <a href="#">Current: {{.Episode.Name}}</a>
+        </li>
+        {{if .Next.ID}}
+        <li>
+          <a href="/listen/{{.Next.ID}}/">Next<span class="is-hidden-touch">: {{.Next.Name}}</span></a>
+        </li>
+        {{else}}
+        <li class="is-hidden-touch">
+          <a href="#">Next: None</a>
+        </li>
+        {{end}}
+      </ul>
+    </div>
+  </nav>
+</div>
 {{end}}
 
 {{define "js"}}

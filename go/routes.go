@@ -82,10 +82,19 @@ func Listen(w http.ResponseWriter, r *http.Request) {
 	episodeID := chi.URLParam(r, "episode")
 	dao := GetDAO()
 	dao.DB.Find(&ep, episodeID).Related(&st)
+
+	// Get next and previous episodes if they exist
+	prev := Episode{}
+	next := Episode{}
+	dao.DB.Where("number = ? AND story_id = ?", (ep.Number - 1), st.ID).First(&prev)
+	dao.DB.Where("number = ? AND story_id = ?", (ep.Number + 1), st.ID).First(&next)
+
 	data := map[string]interface{}{
 		"Title":   "Listen",
 		"Episode": ep,
 		"Story":   st,
+		"Prev": prev,
+		"Next": next,
 	}
 	render(w, "listen.tmpl", data)
 }
