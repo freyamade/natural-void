@@ -1,9 +1,9 @@
 package naturalvoid
 
 import (
-	"github.com/jinzhu/gorm"  // Temp import until I pull episodes from the DB instead
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/jinzhu/gorm" // Temp import until I pull episodes from the DB instead
 	"html/template"
 	"net/http"
 	"strings"
@@ -108,15 +108,15 @@ func Listen(w http.ResponseWriter, r *http.Request) {
 			"The party have got themselves a house and some well deserved downtime.",
 			"What could possibly go wrong?",
 		},
-		Name: "Homestead",
+		Name:   "Homestead",
 		Number: 1,
-		Path: "",
-		Model: gorm.Model{ID: 1},
+		Path:   "",
+		Model:  gorm.Model{ID: 1},
 	}
 	data := map[string]interface{}{
-		"Title": "Listen",
+		"Title":   "Listen",
 		"Episode": ep,
-		"Story": st,
+		"Story":   st,
 	}
 	// Generate and parse the templates
 	tmpl, err := template.ParseFiles("templates/layout.tmpl", "templates/listen.tmpl")
