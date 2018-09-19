@@ -88,7 +88,6 @@ func Listen(w http.ResponseWriter, r *http.Request) {
 		},
 		Name:   "Homestead",
 		Number: 1,
-		Path:   "",
 		Model:  gorm.Model{ID: 1},
 	}
 	data := map[string]interface{}{

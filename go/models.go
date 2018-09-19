@@ -33,6 +33,5 @@ type Episode struct {
 	Description pq.StringArray `gorm:"type:text[]"`
 	Name        string
 	Number      int
-	Path        string
 	StoryID     uint
 }

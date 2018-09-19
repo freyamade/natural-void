@@ -7,7 +7,7 @@ import (
 // Simple seed script to prepopulate the DB
 func main() {
 	// Generate a DAO
-	dao := naturalvoid.GetDAO{}
+	dao := naturalvoid.GetDAO()
 	// Get the prelim data and put it in the DB
 	// Migrate the models
 	dao.DB.AutoMigrate(&naturalvoid.User{})
@@ -33,4 +33,27 @@ func main() {
 		UserID: user.ID,
 	}
 	dao.DB.Create(&dread)
+
+	// Create the first two episodes of Dread
+	ep := naturalvoid.Episode{
+		Name: "Homestead",
+		Description: []string{
+			"The party have got themselves a house and some well deserved downtime.",
+			"What could possibly go wrong?",
+		},
+		Number: 1,
+		StoryID: dread.ID,
+	}
+	dao.DB.Create(&ep)
+
+	ep = naturalvoid.Episode{
+		Name: "Between a Vamp and a Fireplace",
+		Description: []string{
+			"Some trouble with the landlord leads to a brawl in the kitchen.",
+			"Good news for the landlord though, his party is back on!",
+		},
+		Number: 2,
+		StoryID: dread.ID,
+	}
+	dao.DB.Create(&ep)
 }
