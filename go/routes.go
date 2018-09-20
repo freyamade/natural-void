@@ -15,6 +15,10 @@ type message struct {
 	Text string
 }
 
+var styleTheme = map[string]string {
+        "dread": "#2C0047",
+    }
+
 func NewRouter() chi.Router {
 	r := chi.NewRouter()
 	// Add middleware
@@ -155,18 +159,21 @@ func Manifest(w http.ResponseWriter, r *http.Request) {
 
 // Helper to ensure necessary data is always passed to Template
 func render(w http.ResponseWriter, r *http.Request, name string, data map[string]interface{}) {
-	// Add necessary data to data, and then render the specified template
-	style := "dread"  // Overwrite with logic to get style from session
-	// Map the style name to its theme colour
-	styleTheme := map[string]string {
-		"dread": "#2C0047",
-	}
-	data["Style"] = style
-	data["Theme"] = styleTheme[style]
-
     // Add session data to the map
     conf := GetConf()
     session, _ := conf.SessionStore.Get(r, "session")
+
+	// Add necessary data to data, and then render the specified template
+	var style string
+    if session.Values["style"] == nil {
+        style = "dread"
+    } else {
+        style = session.Values["style"].(string)
+    }
+    session.Values["style"] = style
+	data["Style"] = style
+	data["Theme"] = styleTheme[style]
+
     data["Session"] = session.Values
 
     // Check flash messages
