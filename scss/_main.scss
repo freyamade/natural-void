@@ -48,8 +48,13 @@ html, body {
 svg.is-scheme-primary {
     fill: $scheme-primary-invert;
 }
-.navbar-item.title {
-    margin: 0;
+.title {
+    &.navbar-item {
+        margin: 0;
+    }
+    &.is-scheme-primary {
+        color: $scheme-primary-invert;
+    }
 }
 .content-title {
     border-bottom: 2px solid $scheme-secondary;
@@ -72,6 +77,14 @@ svg.is-scheme-primary {
 #player-container {
     background-color: $scheme-primary;
     min-height: 100px;
+}
+.episode-container {
+    color: $scheme-primary-invert;
+
+    & a.button {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
 }
 
 // Amplitude stuff
