@@ -33,6 +33,7 @@ func NewRouter() chi.Router {
     r.Get("/logout/", Logout)
     r.Get("/story/{story:\\d+}/", Episodes)
 	r.Get("/listen/{story:\\d+}/{episode:\\d+}/", Listen)
+    r.Get("/upload/", UploadForm)
 	// Serve the static files
 	fileServer(r, "/static/", http.Dir("./static"))
 	// Also serve the episodes
@@ -168,7 +169,23 @@ func Listen(w http.ResponseWriter, r *http.Request) {
 }
 
 // Show the page where a User who is a DM can upload an episode of a story
-func UploadForm(w http.ResponseWriter, r *http.Request) {}
+func UploadForm(w http.ResponseWriter, r *http.Request) {
+    conf := GetConf()
+    session, _ := conf.SessionStore.Get(r, "session")
+    if !(session.Values["Authenticated"] == true) && !(isDM(session.Values["Username"].(string))) {
+        // Redirect to the index with an error message
+        session.AddFlash("danger:You must be logged in and be running a story to access this page.")
+        session.Save(r, w)
+        http.Redirect(w, r, "/", 303)
+        return
+    }
+    // Display a form allowing the user to upload an episode
+    data := map[string]interface{}{
+        "Title": "Upload a new episode",
+        "Stories": getStories(session.Values["Username"].(string)),
+    }
+    render(w, r, "upload.tmpl", data)
+}
 
 // Handle the uploading of an Episode into the DB
 func UploadEpisode(w http.ResponseWriter, r *http.Request) {}
