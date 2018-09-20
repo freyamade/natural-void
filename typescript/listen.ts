@@ -15,7 +15,9 @@ function getSchemeColours(): Colours {
 
 async function loadEpisode(): Promise<void> {
   // Get the episode id
-  const episodeID = (document.querySelector('#player-container')! as HTMLElement).dataset.episodeId!;
+  const dataset = (document.querySelector('#player-container')! as HTMLElement).dataset;
+  const episodeNum = dataset.episodeNum!;
+  const storyId = dataset.storyId;
   // Get the colours of the scheme
   const colours: Colours = getSchemeColours();
   Amplitude.init({
@@ -23,7 +25,7 @@ async function loadEpisode(): Promise<void> {
       32: 'play_pause',
     },
     songs: [{
-      url: `/episodes/${episodeID}/episode.wav`,
+      url: `/episodes/${storyId}/${episodeNum}`,
     }]
   });
 

@@ -7,7 +7,7 @@
       <h2 class="title">{{.Episode.Name}}</h2>
       <p>Episode #{{.Episode.Number}} of {{.Story.ShortName}}</p>
     </div>
-    <div id="player-container" data-episode-id="{{.Episode.ID}}" class="has-text-centered">
+    <div id="player-container" data-episode-num="{{.Episode.Number}}" data-story-id="{{.Story.ID}}" class="has-text-centered">
       <progress class="amplitude-song-played-progress" amplitude-main-song-played-progress="true" id="song-played-progress"></progress>
       <span class="is-pulled-left current-time">
         <span class="amplitude-current-hours" amplitude-main-current-hours="true"></span>:<span class="amplitude-current-minutes" amplitude-main-current-minutes="true"></span>:<span class="amplitude-current-seconds" amplitude-main-current-seconds="true"></span>
@@ -31,7 +31,7 @@
       <ul>
         {{if .Prev.ID}}
         <li>
-          <a href="/listen/{{.Story.ID}}/{{.Prev.Number}}/">Prev<span class="is-hidden-touch">: {{.Prev.Name}}</span></a>
+          <a href="/episode/{{.Story.ID}}/{{.Prev.Number}}/">Prev<span class="is-hidden-touch">: {{.Prev.Name}}</span></a>
         </li>
         {{else}}
         <li class="is-hidden-touch">
@@ -43,7 +43,7 @@
         </li>
         {{if .Next.ID}}
         <li>
-          <a href="/listen/{{.Story.ID}}/{{.Next.Number}}/">Next<span class="is-hidden-touch">: {{.Next.Name}}</span></a>
+          <a href="/episode/{{.Story.ID}}/{{.Next.Number}}/">Next<span class="is-hidden-touch">: {{.Next.Name}}</span></a>
         </li>
         {{else}}
         <li class="is-hidden-touch">
