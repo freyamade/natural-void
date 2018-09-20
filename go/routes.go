@@ -26,6 +26,7 @@ func NewRouter() chi.Router {
 	r.Get("/manifest/", Manifest)
 	r.Get("/login/", LoginForm)
 	r.Post("/login/", Login)
+    r.Get("/logout/", Logout)
 
 	r.Get("/listen/{episode:\\d+}/", Listen)
 	// Serve the static files
@@ -100,12 +101,15 @@ func Logout(w http.ResponseWriter, r *http.Request) {
     conf := GetConf()
     session, _ := conf.SessionStore.Get(r, "session")
     if session.Values["Authenticated"] == true {
+        session.Values["Authenticated"] = false
+        session.Values["Username"] = ""
+        session.AddFlash("success:You have been logged out successfully!")
+    } else {
         // Redirect back to the index with a message saying they logged in.
-        session.AddFlash("success:You are already logged in!")
-        session.Save(r, w)
-        http.Redirect(w, r, "/", 303)
-        return
+        session.AddFlash("danger:You have to be logged in to log out!")
     }
+    session.Save(r, w)
+    http.Redirect(w, r, "/", 303)
 }
 
 // Show the list of episodes in order of newest first
