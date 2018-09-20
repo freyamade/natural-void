@@ -5,7 +5,7 @@
   <section class="container">
     <div class="is-scheme-primary listen-title">
       <h2 class="title">{{.Episode.Name}}</h2>
-      <p>Episode #{{.Episode.Number}} of {{.Story.ShortName}}</p>
+      <p>Episode #{{.Episode.Number}} of <a href="/story/{{.Story.ID}}">{{.Story.ShortName}}</a></p>
     </div>
     <div id="player-container" data-episode-num="{{.Episode.Number}}" data-story-id="{{.Story.ID}}" class="has-text-centered">
       <progress class="amplitude-song-played-progress" amplitude-main-song-played-progress="true" id="song-played-progress"></progress>
