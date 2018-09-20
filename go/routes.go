@@ -52,10 +52,9 @@ func LoginForm(w http.ResponseWriter, r *http.Request) {
     // Check to make sure the user hasn't already logged in
     conf := GetConf()
     session, _ := conf.SessionStore.Get(r, "session")
-    fmt.Println(session.Values)
     if session.Values["Authenticated"] == true {
         // Redirect back to the index with a message saying they logged in.
-        session.AddFlash("You are already logged in!")
+        session.AddFlash("success:You are already logged in!")
         session.Save(r, w)
         http.Redirect(w, r, "/", 303)
         return
@@ -89,7 +88,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
         session, _ := conf.SessionStore.Get(r, "session")
         session.Values["Authenticated"] = true
         session.Values["Username"] = sentUsername
-        session.AddFlash("You have logged in successfully!")
+        session.AddFlash("success:You have logged in successfully!")
         session.Save(r, w)
         http.Redirect(w, r, "/", 303)
     }
@@ -98,6 +97,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 // Handle logging out of a logged in user
 func Logout(w http.ResponseWriter, r *http.Request) {
     // Remove the authenticated flag from the session
+    conf := GetConf()
+    session, _ := conf.SessionStore.Get(r, "session")
+    if session.Values["Authenticated"] == true {
+        // Redirect back to the index with a message saying they logged in.
+        session.AddFlash("success:You are already logged in!")
+        session.Save(r, w)
+        http.Redirect(w, r, "/", 303)
+        return
+    }
 }
 
 // Show the list of episodes in order of newest first
@@ -158,9 +166,7 @@ func render(w http.ResponseWriter, r *http.Request, name string, data map[string
     data["Session"] = session.Values
 
     // Check flash messages
-    fmt.Println("Checking flashes")
     if flashes := session.Flashes(); len(flashes) > 0 {
-        fmt.Println("Generating messages")
         var messages []message
         if data["Messages"] != nil {
             messages = data["Messages"].([]message)
@@ -168,10 +174,11 @@ func render(w http.ResponseWriter, r *http.Request, name string, data map[string
             messages = []message{}
         }
         for _, msg := range flashes {
-            messages = append(messages, message{Type: "success", Text: msg.(string)})
+            splitMsg := strings.Split(msg.(string), ":")
+            // Split the type and message from the message
+            messages = append(messages, message{Type: splitMsg[0], Text: splitMsg[1]})
         }
         data["Messages"] = messages
-        fmt.Println(messages)
     }
     session.Save(r, w)
 
