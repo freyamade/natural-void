@@ -49,15 +49,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 // Display a form to the User to allow them to log in
 func LoginForm(w http.ResponseWriter, r *http.Request) {
-	data := map[string]interface{}{
-		"Title": "Login",
-	}
-	render(w, r, "login.tmpl", data)
-}
-
-// Handle logging in of a user by checking against LDAP
-func Login(w http.ResponseWriter, r *http.Request) {
-    // Get the session and checked that the user is not already logged in
+    // Check to make sure the user hasn't already logged in
     conf := GetConf()
     session, _ := conf.SessionStore.Get(r, "session")
     if session.Values["authenticated"] == true {
@@ -66,6 +58,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
         session.Save(r, w)
         http.Redirect(w, r, "/", 301)
     }
+	data := map[string]interface{}{
+		"Title": "Login",
+	}
+	render(w, r, "login.tmpl", data)
+}
+
+// Handle logging in of a user by checking against LDAP
+func Login(w http.ResponseWriter, r *http.Request) {
+    // Attempt to auth the user
 	// Attempt to parse the form
 	err := r.ParseForm()
 	if err != nil {
@@ -82,17 +83,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
     // Validate the sent username and password
     if sentUsername == auth["username"] && sentPassword == auth["password"] {
         // Store important things in the session
+        conf := GetConf()
+        session, _ := conf.SessionStore.Get(r, "session")
         session.Values["authenticated"] = true
         session.Values["username"] = sentUsername
         session.AddFlash("You have logged in successfully!")
         session.Save(r, w)
         http.Redirect(w, r, "/", 301)
     }
-	data := map[string]interface{}{
-		"Title":    "Login",
-		"Username": r.Form.Get("username"),
-	}
-	render(w, r, "login.tmpl", data)
 }
 
 // Handle logging out of a logged in user
@@ -159,7 +157,7 @@ func render(w http.ResponseWriter, r *http.Request, name string, data map[string
     // Check flash messages
     if flashes := session.Flashes(); len(flashes) > 0 {
         var messages []message
-        if data["Messages"] != 0 {
+        if data["Messages"] != nil {
             messages = data["Messages"].([]message)
         } else {
             messages = []message{}
