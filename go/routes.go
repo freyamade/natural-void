@@ -181,7 +181,7 @@ func UploadForm(w http.ResponseWriter, r *http.Request) {
     }
     // Display a form allowing the user to upload an episode
     data := map[string]interface{}{
-        "Title": "Upload a new episode",
+        "Title": "Upload an episode",
         "Stories": getStories(session.Values["Username"].(string)),
     }
     render(w, r, "upload.tmpl", data)
