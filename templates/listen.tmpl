@@ -31,7 +31,7 @@
       <ul>
         {{if .Prev.ID}}
         <li>
-          <a href="/listen/{{.Prev.ID}}/">Prev<span class="is-hidden-touch">: {{.Prev.Name}}</span></a>
+          <a href="/listen/{{.Story.ID}}/{{.Prev.Number}}/">Prev<span class="is-hidden-touch">: {{.Prev.Name}}</span></a>
         </li>
         {{else}}
         <li class="is-hidden-touch">
@@ -43,7 +43,7 @@
         </li>
         {{if .Next.ID}}
         <li>
-          <a href="/listen/{{.Next.ID}}/">Next<span class="is-hidden-touch">: {{.Next.Name}}</span></a>
+          <a href="/listen/{{.Story.ID}}/{{.Next.Number}}/">Next<span class="is-hidden-touch">: {{.Next.Name}}</span></a>
         </li>
         {{else}}
         <li class="is-hidden-touch">

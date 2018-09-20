@@ -32,7 +32,7 @@ func NewRouter() chi.Router {
 	r.Post("/login/", Login)
     r.Get("/logout/", Logout)
     r.Get("/story/{story:\\d+}/", Episodes)
-	r.Get("/listen/{episode:\\d+}/", Listen)
+	r.Get("/listen/{story:\\d+}/{episode:\\d+}/", Listen)
 	// Serve the static files
 	fileServer(r, "/static/", http.Dir("./static"))
 	// Also serve the episodes
@@ -136,15 +136,16 @@ func Episodes(w http.ResponseWriter, r *http.Request) {
 func Listen(w http.ResponseWriter, r *http.Request) {
 	st := Story{}
 	ep := Episode{}
-	episodeID := chi.URLParam(r, "episode")
+    storyID := chi.URLParam(r, "story")
+	episode := chi.URLParam(r, "episode")
 	dao := GetDAO()
-	dao.DB.Find(&ep, episodeID).Related(&st)
+	dao.DB.Where("story_id = ? AND number = ?", storyID, episode).Find(&ep).Related(&st)
 
 	// Get next and previous episodes if they exist
 	prev := Episode{}
 	next := Episode{}
-	dao.DB.Where("number = ? AND story_id = ?", (ep.Number - 1), st.ID).First(&prev)
-	dao.DB.Where("number = ? AND story_id = ?", (ep.Number + 1), st.ID).First(&next)
+	dao.DB.Where("number = ? AND story_id = ?", (episode - 1), storyID).First(&prev)
+	dao.DB.Where("number = ? AND story_id = ?", (episode + 1), storyID).First(&next)
 
 	data := map[string]interface{}{
 		"Title":   "Listen",
