@@ -34,8 +34,9 @@ func NewRouter() chi.Router {
 	r.Post("/login/", Login)
 	r.Get("/logout/", Logout)
 	r.Get("/story/{story:\\d+}/", Episodes)
-	r.Get("/listen/{story:\\d+}/{episode:\\d+}/", Listen)
-	r.Get("/upload/", UploadForm)
+	r.Get("/episode/{story:\\d+}/{episode:\\d+}/", Listen)
+    r.Post("/episode/{story:\\d+}/{episode:\\d+}/delete/", DeleteEpisode)
+    r.Get("/upload/", UploadForm)
     r.Post("/upload/", UploadEpisode)
 	// Serve the static files
 	fileServer(r, "/static/", http.Dir("./static"))
@@ -133,14 +134,18 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 func Episodes(w http.ResponseWriter, r *http.Request) {
 	storyID := chi.URLParam(r, "story")
 	st := Story{}
+    user := User{}
 	episodes := []Episode{}
 	dao := GetDAO()
-	dao.DB.Find(&st, storyID)
+	dao.DB.Find(&st, storyID).Related(&user)
 	dao.DB.Order("number DESC").Find(&episodes)
+    conf := GetConf()
+    session, _ := conf.SessionStore.Get(r, "session")
 	data := map[string]interface{}{
 		"Title":    fmt.Sprintf("%s Episodes", st.Name),
 		"Story":    st,
 		"Episodes": episodes,
+        "IsOwner": session.Values["Username"] == user.Username,
 	}
 	render(w, r, "episode_list.tmpl", data)
 }
@@ -325,10 +330,64 @@ func UploadEpisode(w http.ResponseWriter, r *http.Request) {
     http.Redirect(w, r, fmt.Sprintf("/story/%d/", st.ID), 303)
 }
 
+// Delete an episode if the current auth'd user owns it
+func DeleteEpisode(w http.ResponseWriter, r *http.Request) {
+    conf := GetConf()
+    session, _ := conf.SessionStore.Get(r, "session")
+    user := User{}
+    st := Story{}
+    ep := Episode{}
+    storyID := chi.URLParam(r, "story")
+    episode := chi.URLParam(r, "episode")
+    dao := GetDAO()
+
+    // Delete the episode from the DB and also delete the episode file from the file system
+    err := dao.DB.Find(&st, storyID).Related(&user).Error
+    if err != nil {
+        session.AddFlash("danger:Invalid Story ID.")
+        session.Save(r, w)
+        http.Redirect(w, r, "/", 303)
+        return
+    }
+
+    // Ensure the episode exists
+    err = dao.DB.Where("story_id = ? AND number = ?", storyID, episode).Find(&ep).Error
+    if err != nil {
+        session.AddFlash("danger:Invalid Episode Number.")
+        session.Save(r, w)
+        http.Redirect(w, r, fmt.Sprintf("/story/%d/", st.ID), 303)
+        return
+    }
+
+    // Ensure the requester owns the story
+    if session.Values["Authenticated"] != true || session.Values["Username"] != user.Username {
+        session.AddFlash("danger:Episodes can only be deleted by the owner of the story.")
+        session.Save(r, w)
+        http.Redirect(w, r, fmt.Sprintf("/story/%d/", st.ID), 303)
+        return
+    }
+
+    // Delete from the file system
+    path := fmt.Sprintf("./episodes/%d/%d", st.ID, ep.Number)
+    err = os.Remove(path)
+    if err != nil {
+        fmt.Println(err)
+        session.AddFlash("danger:Couldn't delete episode file from filesystem.")
+        session.Save(r, w)
+        http.Redirect(w, r, fmt.Sprintf("/story/%d/", st.ID), 303)
+        return
+    }
+    // Delete from DB
+    dao.DB.Delete(&ep)
+    session.AddFlash(fmt.Sprintf("success:Successfully deleted episode %d of %s.", ep.Number, st.Name))
+    session.Save(r, w)
+    http.Redirect(w, r, fmt.Sprintf("/story/%d/", st.ID), 303)
+}
+
 // Generate the manifest
 func Manifest(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	render(w, r, "manifest.tmpl", map[string]interface{}{})
+    w.Header().Set("Content-Type", "application/json")
+    render(w, r, "manifest.tmpl", map[string]interface{}{})
 }
 
 // HELPERS
