@@ -20,6 +20,7 @@ func NewRouter() chi.Router {
 	// Add middleware
 	r.Use(ensureTrailingSlash)
 	r.Use(middleware.DefaultCompress)
+	r.Use(middleware.Logger)
 	// Register the routes
 	r.Get("/", Index)
 	r.Get("/manifest/", Manifest)
