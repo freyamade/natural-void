@@ -58,13 +58,16 @@
             <div class="field-body">
               <div class="field">
                 <div class="control">
-                  <div class="file">
+                  <div class="file has-name is-fullwidth">
                     <label class="file-label">
                       <input class="file-input" type="file" name="file" id="file">
                       <span class="file-cta">
                         <span class="file-label">
                           Choose a file…
                         </span>
+                      </span>
+                      <span class="file-name" id="file-name">
+                        None
                       </span>
                     </label>
                   </div>
@@ -83,4 +86,8 @@
     </div>
   </section>
 </div>
+{{end}}
+
+{{define "js"}}
+<script defer src="/static/js/upload.js"></script>
 {{end}}

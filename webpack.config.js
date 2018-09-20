@@ -5,7 +5,8 @@ module.exports = {
     entry: {
         index: './typescript/index.ts',
         listen: './typescript/listen.ts',
-        menu: './typescript/menu.ts'
+        menu: './typescript/menu.ts',
+        upload: './typescript/upload.ts'
     },
     output: {
         path: path.resolve(__dirname, './static'),
