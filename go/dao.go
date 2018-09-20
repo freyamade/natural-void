@@ -10,18 +10,18 @@ type DAO struct {
 	DB *gorm.DB
 }
 
-var instance *DAO
-var once sync.Once
+var daoInstance *DAO
+var daoOnce sync.Once
 
 func GetDAO() *DAO {
-	once.Do(func() {
-		instance = &DAO{}
-		err := instance.new()
+	daoOnce.Do(func() {
+		daoInstance = &DAO{}
+		err := daoInstance.new()
 		if err != nil {
 			panic(err)
 		}
 	})
-	return instance
+	return daoInstance
 }
 
 func (dao *DAO) new() error {

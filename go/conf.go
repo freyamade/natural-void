@@ -1,32 +1,33 @@
 package naturalvoid
 
 import (
-    "os"
+//    "os"
     "sync"
     "github.com/gorilla/sessions"
 )
 
 // Struct of configuration stuff
 type Conf struct {
-    SessionStore *sessions.Store
+    SessionStore *sessions.CookieStore
 }
 
-var instance *Conf
-var once sync.Once
+var confInstance *Conf
+var confOnce sync.Once
 
 func GetConf() *Conf {
-    once.Do(func() {
-        instance = &Conf{}
-        err := instance.new()
+    confOnce.Do(func() {
+        confInstance = &Conf{}
+        err := confInstance.new()
         if err != nil {
             panic(err)
         }
     })
-    return instance
+    return confInstance
 }
 
 func (conf *Conf) new() error {
     // Initialize a new Conf struct
     // Create a gorilla session store (use Env vars)
-    conf.SessionStore = sessions.NewCookieStore("replacethiswithanactualsecretkey")
+    conf.SessionStore = sessions.NewCookieStore([]byte("replacethiswithanactualsecretkey"))
+    return nil
 }
