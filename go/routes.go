@@ -52,11 +52,13 @@ func LoginForm(w http.ResponseWriter, r *http.Request) {
     // Check to make sure the user hasn't already logged in
     conf := GetConf()
     session, _ := conf.SessionStore.Get(r, "session")
-    if session.Values["authenticated"] == true {
+    fmt.Println(session.Values)
+    if session.Values["Authenticated"] == true {
         // Redirect back to the index with a message saying they logged in.
         session.AddFlash("You are already logged in!")
         session.Save(r, w)
-        http.Redirect(w, r, "/", 301)
+        http.Redirect(w, r, "/", 303)
+        return
     }
 	data := map[string]interface{}{
 		"Title": "Login",
@@ -85,16 +87,18 @@ func Login(w http.ResponseWriter, r *http.Request) {
         // Store important things in the session
         conf := GetConf()
         session, _ := conf.SessionStore.Get(r, "session")
-        session.Values["authenticated"] = true
-        session.Values["username"] = sentUsername
+        session.Values["Authenticated"] = true
+        session.Values["Username"] = sentUsername
         session.AddFlash("You have logged in successfully!")
         session.Save(r, w)
-        http.Redirect(w, r, "/", 301)
+        http.Redirect(w, r, "/", 303)
     }
 }
 
 // Handle logging out of a logged in user
-func Logout(w http.ResponseWriter, r *http.Request) {}
+func Logout(w http.ResponseWriter, r *http.Request) {
+    // Remove the authenticated flag from the session
+}
 
 // Show the list of episodes in order of newest first
 func Episodes(w http.ResponseWriter, r *http.Request) {}
@@ -151,11 +155,12 @@ func render(w http.ResponseWriter, r *http.Request, name string, data map[string
     // Add session data to the map
     conf := GetConf()
     session, _ := conf.SessionStore.Get(r, "session")
-    data["Authenticated"] = session.Values["authenticated"]
-    data["Username"] = session.Values["username"]
+    data["Session"] = session.Values
 
     // Check flash messages
+    fmt.Println("Checking flashes")
     if flashes := session.Flashes(); len(flashes) > 0 {
+        fmt.Println("Generating messages")
         var messages []message
         if data["Messages"] != nil {
             messages = data["Messages"].([]message)
@@ -166,6 +171,7 @@ func render(w http.ResponseWriter, r *http.Request, name string, data map[string
             messages = append(messages, message{Type: "success", Text: msg.(string)})
         }
         data["Messages"] = messages
+        fmt.Println(messages)
     }
     session.Save(r, w)
 
@@ -208,7 +214,7 @@ func fileServer(r chi.Router, path string, root http.FileSystem) {
 	fs := http.StripPrefix(path, http.FileServer(root))
 
 	if path != "/" && path[len(path)-1] != '/' {
-		r.Get(path, http.RedirectHandler(path+"/", 301).ServeHTTP)
+		r.Get(path, http.RedirectHandler(path+"/", 303).ServeHTTP)
 		path += "/"
 	}
 	path += "*"
