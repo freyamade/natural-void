@@ -41,7 +41,7 @@ func main() {
 			"The party have got themselves a house and some well deserved downtime.",
 			"What could possibly go wrong?",
 		},
-		Number: 1,
+		Number:  1,
 		StoryID: dread.ID,
 	}
 	dao.DB.Create(&ep)
@@ -52,7 +52,7 @@ func main() {
 			"Some trouble with the landlord leads to a brawl in the kitchen.",
 			"Good news for the landlord though, his party is back on!",
 		},
-		Number: 2,
+		Number:  2,
 		StoryID: dread.ID,
 	}
 	dao.DB.Create(&ep)
