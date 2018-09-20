@@ -2,6 +2,8 @@ package naturalvoid
 
 import (
 	"fmt"
+    "os"
+    "io"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"html/template"
@@ -34,6 +36,7 @@ func NewRouter() chi.Router {
 	r.Get("/story/{story:\\d+}/", Episodes)
 	r.Get("/listen/{story:\\d+}/{episode:\\d+}/", Listen)
 	r.Get("/upload/", UploadForm)
+    r.Post("/upload/", UploadEpisode)
 	// Serve the static files
 	fileServer(r, "/static/", http.Dir("./static"))
 	// Also serve the episodes
@@ -188,7 +191,139 @@ func UploadForm(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handle the uploading of an Episode into the DB
-func UploadEpisode(w http.ResponseWriter, r *http.Request) {}
+func UploadEpisode(w http.ResponseWriter, r *http.Request) {
+    conf := GetConf()
+    session, _ := conf.SessionStore.Get(r, "session")
+    if !(session.Values["Authenticated"] == true) && !(isDM(session.Values["Username"].(string))) {
+        // Redirect to the index with an error message
+        session.AddFlash("danger:You must be logged in and be running a story to access this page.")
+        session.Save(r, w)
+        http.Redirect(w, r, "/", 303)
+        return
+    }
+    // Parse the form and check for valid params
+    err := r.ParseMultipartForm(32 << 20)
+    if err != nil {
+        panic(err)
+    }
+
+    // Ensure all fields have been sent
+    if r.Form.Get("name") == "" || r.Form.Get("description") == "" || r.Form.Get("story") == "" {
+        session.AddFlash("danger:All of the text fields must be filled in.")
+        session.Save(r, w)
+        data := map[string]interface{}{
+            "Title":   "Upload an episode",
+            "Stories": getStories(session.Values["Username"].(string)),
+            "Name": r.Form.Get("name"),
+            "Description": r.Form.Get("description"),
+        }
+        render(w, r, "upload.tmpl", data)
+        return
+    }
+
+    // Ensure that the sent story id is valid
+    st := Story{}
+    dao := GetDAO()
+    err = dao.DB.Find(&st, r.Form.Get("story")).Error
+    if err != nil {
+        session.AddFlash("danger:Invalid Story Id.")
+        session.Save(r, w)
+        data := map[string]interface{}{
+            "Title":   "Upload an episode",
+            "Stories": getStories(session.Values["Username"].(string)),
+            "Name": r.Form.Get("name"),
+            "Description": r.Form.Get("description"),
+        }
+        render(w, r, "upload.tmpl", data)
+        return
+    }
+
+    // Check that no other episodes have the same name in the story
+    var count int
+    dao.DB.Model(&Episode{}).Where("story_id = ? AND name = ?", st.ID, r.Form.Get("name")).Count(&count)
+    if count > 0 {
+        session.AddFlash("danger:An episode with the specified name already exists for the chosen story.")
+        session.Save(r, w)
+        data := map[string]interface{}{
+            "Title":   "Upload an episode",
+            "Stories": getStories(session.Values["Username"].(string)),
+            "Name": r.Form.Get("name"),
+            "Description": r.Form.Get("description"),
+        }
+        render(w, r, "upload.tmpl", data)
+        return
+    }
+
+    // Check that the file has been sent
+    file, handler, err := r.FormFile("file")
+    defer file.Close()
+    if err != nil {
+        fmt.Println(err)
+        session.AddFlash("danger:Error reading file. Make sure it has been sent correctly.")
+        session.Save(r, w)
+        data := map[string]interface{}{
+            "Title":   "Upload an episode",
+            "Stories": getStories(session.Values["Username"].(string)),
+            "Name": r.Form.Get("name"),
+            "Description": r.Form.Get("description"),
+        }
+        render(w, r, "upload.tmpl", data)
+        return
+    }
+
+    // Check mime type of file to ensure it is audio
+    contentType := handler.Header["Content-Type"][0]
+    if strings.Split(contentType, "/")[0] != "audio" {
+        session.AddFlash("danger:Please ensure the uploaded file is an audio file.")
+        session.Save(r, w)
+        data := map[string]interface{}{
+            "Title":   "Upload an episode",
+            "Stories": getStories(session.Values["Username"].(string)),
+            "Name": r.Form.Get("name"),
+            "Description": r.Form.Get("description"),
+        }
+        render(w, r, "upload.tmpl", data)
+        return
+    }
+
+    // If we get to this point, it's safe to say that the upload is good
+
+    // Calculate the number for this episode
+    var number int
+    dao.DB.Model(&Episode{}).Where("story_id = ?", st.ID).Count(&number)
+    number += 1
+    // Create the new model
+    ep := Episode{
+        Name: r.Form.Get("name"),
+        Description: strings.Split(r.Form.Get("description"), "\n"),
+        Number: number,
+        StoryID: st.ID,
+    }
+
+    // Now put the file in the correct directory `./episodes/{storyID}/{episodeID}`
+    // Ensure the dir exists
+    os.MkdirAll(fmt.Sprintf("./episodes/%d/", st.ID), 0755)
+    storeFile, err := os.OpenFile(fmt.Sprintf("./episodes/%d/%d", st.ID, number), os.O_WRONLY | os.O_CREATE, 0644)
+    defer storeFile.Close()
+    if err != nil {
+        session.AddFlash("danger:An error occurred when trying to upload the file. Please try again later.")
+        session.Save(r, w)
+        data := map[string]interface{}{
+            "Title":   "Upload an episode",
+            "Stories": getStories(session.Values["Username"].(string)),
+            "Name": r.Form.Get("name"),
+            "Description": r.Form.Get("description"),
+        }
+        render(w, r, "upload.tmpl", data)
+        return
+    }
+    io.Copy(storeFile, file)
+    dao.DB.Create(&ep)
+
+    session.AddFlash(fmt.Sprintf("success:Successfully uploaded episode %d of %s.", number, st.Name))
+    session.Save(r, w)
+    http.Redirect(w, r, fmt.Sprintf("/story/%d/", st.ID), 303)
+}
 
 // Generate the manifest
 func Manifest(w http.ResponseWriter, r *http.Request) {

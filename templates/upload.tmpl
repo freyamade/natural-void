@@ -8,7 +8,7 @@
     <div class="columns">
       <div class="column"></div>
       <div class="column is-half">
-        <form method="POST" action=".">
+        <form method="POST" action="." enctype="multipart/form-data">
           <div class="field is-horizontal">
             <div class="field-label is-normal">
               <label class="label" for="name">Name</label>
@@ -46,7 +46,7 @@
             <div class="field-body">
               <div class="field">
                 <div class="control">
-                  <textarea class="textarea" name="description" id="description" value="{{.Description}}" placeholder="Describe the episode in a few sentences."></textarea>
+                  <textarea class="textarea" name="description" id="description" placeholder="Describe the episode in a few sentences.">{{if .Description}}{{.Description}}{{end}}</textarea>
                 </div>
               </div>
             </div>
