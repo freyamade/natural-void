@@ -31,7 +31,7 @@ func NewRouter() chi.Router {
 	r.Get("/login/", LoginForm)
 	r.Post("/login/", Login)
     r.Get("/logout/", Logout)
-
+    r.Get("/story/{story:\\d+}/", Episodes)
 	r.Get("/listen/{episode:\\d+}/", Listen)
 	// Serve the static files
 	fileServer(r, "/static/", http.Dir("./static"))
@@ -117,7 +117,20 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 // Show the list of episodes in order of newest first
-func Episodes(w http.ResponseWriter, r *http.Request) {}
+func Episodes(w http.ResponseWriter, r *http.Request) {
+    storyID := chi.URLParam(r, "story")
+    st := Story{}
+    episodes := []Episode{}
+    dao := GetDAO()
+    dao.DB.Find(&st, storyID)
+    dao.DB.Order("number DESC").Find(&episodes)
+    data := map[string]interface{}{
+        "Title": fmt.Sprintf("%s Episodes", st.Name),
+        "Story": st,
+        "Episodes": episodes,
+    }
+    render(w, r, "episode_list.tmpl", data)
+}
 
 // Show the page where the user can listen to an episode
 func Listen(w http.ResponseWriter, r *http.Request) {

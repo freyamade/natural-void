@@ -1,0 +1,14 @@
+{{template "layout" .}}
+
+{{define "content"}}
+<div class="hero-body">
+  <section class="container has-text-centered">
+    <h2 class="title is-scheme-primary content-title">
+      {{.Story.Name}}
+    </h2>
+    {{range .Story.Description}}
+    <p>{{.}}</p>
+    {{end}}
+  </section>
+</div>
+{{end}}

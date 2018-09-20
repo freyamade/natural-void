@@ -12,7 +12,7 @@
     <link rel="manifest" href="/manifest/" />
     <meta name="theme-color" content="{{.Theme}}" />
   </head>
-  <body>
+  <body class="has-background-scheme-primary">
   <section class="hero is-scheme-primary is-fullheight">
     <div class="hero-head">
       <header class="navbar">
@@ -35,9 +35,6 @@
           </div>
           <div id="nav-remainder" class="navbar-menu">
             <div class="navbar-end">
-              <a class="navbar-item {{if .Title}}{{if eq .Title "Episodes"}}{{"is-active"}}{{end}}{{end}}" href="/episodes/">
-                Episodes
-              </a>
               {{if .Session.Authenticated}}
               <a class="navbar-item" href="/logout/">
                 Logout {{.Session.Username}}
@@ -63,6 +60,7 @@
     {{end}}
     {{block "content" .}}{{end}}
   </section>
+  {{block "longContent" .}}{{end}}
   {{block "js" .}}{{end}}
   <script defer src="/static/js/menu.js"></script>
   </body>
