@@ -38,9 +38,15 @@
               <a class="navbar-item {{if .Title}}{{if eq .Title "Episodes"}}{{"is-active"}}{{end}}{{end}}" href="/episodes/">
                 Episodes
               </a>
+              {{if .Session.Authenticated}}
+              <a class="navbar-item" href="/logout/">
+                Logout {{.Session.Username}}
+              </a>
+              {{else}}
               <a class="navbar-item {{if .Title}}{{if eq .Title "Login"}}{{"is-active"}}{{end}}{{end}}" href="/login/">
                 Login
               </a>
+              {{end}}
             </div>
           </div>
         </div>
