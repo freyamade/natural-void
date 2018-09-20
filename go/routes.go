@@ -44,7 +44,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"Stories": stories,
 	}
-	render(w, "index.tmpl", data)
+	render(w, r, "index.tmpl", data)
 }
 
 // Display a form to the User to allow them to log in
@@ -52,22 +52,47 @@ func LoginForm(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"Title": "Login",
 	}
-	render(w, "login.tmpl", data)
+	render(w, r, "login.tmpl", data)
 }
 
 // Handle logging in of a user by checking against LDAP
 func Login(w http.ResponseWriter, r *http.Request) {
-	// For now, just render the login form with the passed username
+    // Get the session and checked that the user is not already logged in
+    conf := GetConf()
+    session, _ := conf.SessionStore.Get(r, "session")
+    if session.Values["authenticated"] == true {
+        // Redirect back to the index with a message saying they logged in.
+        session.AddFlash("You are already logged in!")
+        session.Save(r, w)
+        http.Redirect(w, r, "/", 301)
+    }
 	// Attempt to parse the form
 	err := r.ParseForm()
 	if err != nil {
 		panic(err)
 	}
+    // Create some sample login data for now until I can add LDAP later
+    auth := map[string]string {
+        "username": "crnbrdrck",
+        "password": "password",
+    }
+    sentUsername := r.Form.Get("username")
+    sentPassword := r.Form.Get("password")
+
+    // Validate the sent username and password
+    if sentUsername == auth["username"] && sentPassword == auth["password"] {
+        // Store important things in the session
+        session.Values["authenticated"] = true
+        session.Values["username"] = sentUsername
+        session.AddFlash("You have logged in successfully!")
+        session.Save(r, w)
+        http.Redirect(w, r, "/", 301)
+    }
 	data := map[string]interface{}{
 		"Title":    "Login",
 		"Username": r.Form.Get("username"),
 	}
-	render(w, "login.tmpl", data)
+	render(w, r, "login.tmpl", data)
 }
 
 // Handle logging out of a logged in user
@@ -97,7 +122,7 @@ func Listen(w http.ResponseWriter, r *http.Request) {
 		"Prev": prev,
 		"Next": next,
 	}
-	render(w, "listen.tmpl", data)
+	render(w, r, "listen.tmpl", data)
 }
 
 // Show the page where a User who is a DM can upload an episode of a story
@@ -109,13 +134,13 @@ func UploadEpisode(w http.ResponseWriter, r *http.Request) {}
 // Generate the manifest
 func Manifest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	render(w, "manifest.tmpl", map[string]interface{}{})
+	render(w, r, "manifest.tmpl", map[string]interface{}{})
 }
 
 // HELPERS
 
 // Helper to ensure necessary data is always passed to Template
-func render(w http.ResponseWriter, name string, data map[string]interface{}) {
+func render(w http.ResponseWriter, r *http.Request, name string, data map[string]interface{}) {
 	// Add necessary data to data, and then render the specified template
 	style := "dread"  // Overwrite with logic to get style from session
 	// Map the style name to its theme colour
@@ -124,6 +149,27 @@ func render(w http.ResponseWriter, name string, data map[string]interface{}) {
 	}
 	data["Style"] = style
 	data["Theme"] = styleTheme[style]
+
+    // Add session data to the map
+    conf := GetConf()
+    session, _ := conf.SessionStore.Get(r, "session")
+    data["Authenticated"] = session.Values["authenticated"]
+    data["Username"] = session.Values["username"]
+
+    // Check flash messages
+    if flashes := session.Flashes(); len(flashes) > 0 {
+        var messages []message
+        if data["Messages"] != 0 {
+            messages = data["Messages"].([]message)
+        } else {
+            messages = []message{}
+        }
+        for _, msg := range flashes {
+            messages = append(messages, message{Type: "success", Text: msg.(string)})
+        }
+        data["Messages"] = messages
+    }
+    session.Save(r, w)
 
 	// Generate and parse the templates
 	tmpl, err := template.ParseFiles("templates/layout.tmpl", fmt.Sprintf("templates/%s", name))
