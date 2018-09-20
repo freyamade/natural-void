@@ -6,7 +6,5 @@ built
 static
 
 # Other
-# episodes/**/*
-!episodes/.keep
-!episodes/1/*
+episodes/**/*
 *.report.html
