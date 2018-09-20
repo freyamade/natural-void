@@ -72,6 +72,9 @@ func LoginForm(w http.ResponseWriter, r *http.Request) {
 
 // Handle logging in of a user by checking against LDAP
 func Login(w http.ResponseWriter, r *http.Request) {
+    // Store important things in the session
+    conf := GetConf()
+    session, _ := conf.SessionStore.Get(r, "session")
     // Attempt to auth the user
 	// Attempt to parse the form
 	err := r.ParseForm()
@@ -88,14 +91,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
     // Validate the sent username and password
     if sentUsername == auth["username"] && sentPassword == auth["password"] {
-        // Store important things in the session
-        conf := GetConf()
-        session, _ := conf.SessionStore.Get(r, "session")
         session.Values["Authenticated"] = true
         session.Values["Username"] = sentUsername
         session.AddFlash("success:You have logged in successfully!")
         session.Save(r, w)
         http.Redirect(w, r, "/", 303)
+    } else {
+        // Re-render the login form with an error message
+        session.AddFlash("danger:Invalid username or password. Please check your details and try again.")
+        session.Save(r, w)
+        data := map[string]interface{}{
+            "Title": "Login",
+            "Username": sentUsername,
+        }
+        render(w, r, "login.tmpl", data)
     }
 }
 
@@ -139,16 +148,17 @@ func Listen(w http.ResponseWriter, r *http.Request) {
     storyID := chi.URLParam(r, "story")
 	episode := chi.URLParam(r, "episode")
 	dao := GetDAO()
-	dao.DB.Where("story_id = ? AND number = ?", storyID, episode).Find(&ep).Related(&st)
+    dao.DB.Find(&st, storyID)
+	dao.DB.Where("story_id = ? AND number = ?", storyID, episode).Find(&ep)
 
 	// Get next and previous episodes if they exist
 	prev := Episode{}
 	next := Episode{}
-	dao.DB.Where("number = ? AND story_id = ?", (episode - 1), storyID).First(&prev)
-	dao.DB.Where("number = ? AND story_id = ?", (episode + 1), storyID).First(&next)
+	dao.DB.Where("number = ? AND story_id = ?", (ep.Number - 1), storyID).First(&prev)
+	dao.DB.Where("number = ? AND story_id = ?", (ep.Number + 1), storyID).First(&next)
 
 	data := map[string]interface{}{
-		"Title":   "Listen",
+		"Title":   fmt.Sprintf("Listen to %s", ep.Name),
 		"Episode": ep,
 		"Story":   st,
 		"Prev": prev,
@@ -187,7 +197,6 @@ func render(w http.ResponseWriter, r *http.Request, name string, data map[string
     session.Values["style"] = style
 	data["Style"] = style
 	data["Theme"] = styleTheme[style]
-
     data["Session"] = session.Values
 
     // Check flash messages
