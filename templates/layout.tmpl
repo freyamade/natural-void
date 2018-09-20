@@ -35,6 +35,11 @@
           </div>
           <div id="nav-remainder" class="navbar-menu">
             <div class="navbar-end">
+              {{if .IsDM}}
+              <a class="navbar-item" href="/upload/">
+                Upload Episode
+              </a>
+              {{end}}
               {{if .Session.Authenticated}}
               <a class="navbar-item" href="/logout/">
                 Logout {{.Session.Username}}

@@ -11,7 +11,7 @@ import (
 type User struct {
 	gorm.Model
 	Stories  []Story
-	UserName string
+	Username string
 }
 
 // A story is a collection of episodes

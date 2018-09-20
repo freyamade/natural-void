@@ -16,7 +16,7 @@ func main() {
 
 	// Create initial user to reflect me from the LDAP server
 	user := naturalvoid.User{
-		UserName: "crnbrdrck",
+		Username: "crnbrdrck",
 	}
 	dao.DB.Create(&user)
 

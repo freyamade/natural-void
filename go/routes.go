@@ -199,6 +199,12 @@ func render(w http.ResponseWriter, r *http.Request, name string, data map[string
 	data["Theme"] = styleTheme[style]
     data["Session"] = session.Values
 
+    // Check whether or not the current user is a DM for a story
+    if session.Values["Authenticated"] == true {
+        // Check if they have any stories
+        data["IsDM"] = isDM(session.Values["Username"].(string))
+    }
+
     // Check flash messages
     if flashes := session.Flashes(); len(flashes) > 0 {
         var messages []message
@@ -263,4 +269,24 @@ func fileServer(r chi.Router, path string, root http.FileSystem) {
 	r.Get(path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fs.ServeHTTP(w, r)
 	}))
+}
+
+// isDM checks the Database for stories owned by the user with the given username
+func isDM(username string) bool {
+    user := User{}
+    dao := GetDAO()
+    dao.DB.Where("username = ?", username).Find(&user)
+    var count uint
+    dao.DB.Model(&Story{}).Where("user_id = ?", user.ID).Count(&count)
+    return count > 0
+}
+
+// Returns a slice of Story structs owned by the User with the supplied username
+func getStories(username string) []Story {
+    user := User{}
+    dao := GetDAO()
+    dao.DB.Where("username = ?", username).Find(&user)
+    stories := []Story{}
+    dao.DB.Where("user_id = ?", user.ID).Find(&stories)
+    return stories
 }
