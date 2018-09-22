@@ -1,10 +1,11 @@
+// Set the 5 main colours
 $light-shade: #B9ADA9;
 $light-accent: #656993;
 $main-brand: #2C0047;
 $dark-accent: #600;
 $dark-shade: #1A141D;
 
-// Set the other derived variables (these come from colourmind as well)
+// Set the notification colours
 $primary: #2c0047;
 $primary-invert: $light-shade;
 $info: #19141d;
@@ -16,7 +17,7 @@ $warning-invert: white;
 $danger: #f44336;
 $danger-invert: white;
 
-// As the second colour of the scheme might be in different places depending on the theme, I'm gonna do this too
+// Set the primary and secondary colours (they don't have to be from the ones defined above)
 $scheme-primary: $main-brand;
 $scheme-primary-invert: $light-shade;
 $scheme-secondary: $dark-accent;
