@@ -1,14 +1,17 @@
 package naturalvoid
 
 import (
-	//    "os"
+	// "os"
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/sessions"
+	"net/http"
 	"sync"
 )
 
 // Struct of configuration stuff
 type Conf struct {
 	SessionStore *sessions.CookieStore
+	CSRF func(http.Handler) http.Handler
 }
 
 var confInstance *Conf
@@ -28,6 +31,9 @@ func GetConf() *Conf {
 func (conf *Conf) new() error {
 	// Initialize a new Conf struct
 	// Create a gorilla session store (use Env vars)
-	conf.SessionStore = sessions.NewCookieStore([]byte("replacethiswithanactualsecretkey"))
+	key := []byte("replacethiswithanactualsecretkey")  // os.GetEnv
+	production := false  // os.GetEnv
+	conf.SessionStore = sessions.NewCookieStore(key)
+	conf.CSRF = csrf.Protect(key, csrf.Secure(production))
 	return nil
 }

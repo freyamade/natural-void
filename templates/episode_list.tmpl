@@ -31,7 +31,7 @@
   {{end}}
   <a href="/episode/{{$story.ID}}/{{.Number}}/" class="button is-scheme-secondary">Listen</a>
   {{if $isOwner}}
-  <form action="/episode/{{$story.ID}}/{{.Number}}/delete/" method="POST"><input type="submit" class="button is-danger" value="Delete Episode" /></form>
+  <form action="/episode/{{$story.ID}}/{{.Number}}/delete/" method="POST">{{.CSRF}}<input type="submit" class="button is-danger" value="Delete Episode" /></form>
   {{end}}
 </section>
 {{end}}

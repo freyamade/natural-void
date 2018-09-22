@@ -9,6 +9,7 @@
       <div class="column"></div>
       <div class="column is-half">
         <form method="POST" action="." enctype="multipart/form-data">
+          {{.CSRF}}
           <div class="field is-horizontal">
             <div class="field-label is-normal">
               <label class="label" for="name">Name</label>

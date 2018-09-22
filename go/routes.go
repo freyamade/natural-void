@@ -6,10 +6,11 @@ import (
     "io"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+    "github.com/gorilla/context"
+    "github.com/gorilla/csrf"
 	"html/template"
 	"net/http"
 	"strings"
-	// "github.com/gorilla/sessions"
 )
 
 type message struct {
@@ -22,11 +23,14 @@ var styleTheme = map[string]string{
 }
 
 func NewRouter() chi.Router {
+    conf := GetConf()
 	r := chi.NewRouter()
 	// Add middleware
 	r.Use(ensureTrailingSlash)
 	r.Use(middleware.DefaultCompress)
 	r.Use(middleware.Logger)
+    r.Use(conf.CSRF)
+    r.Use(context.ClearHandler)
 	// Register the routes
 	r.Get("/", Index)
 	r.Get("/manifest/", Manifest)
@@ -69,8 +73,10 @@ func LoginForm(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", 303)
 		return
 	}
+    // Get the CSRF token
 	data := map[string]interface{}{
 		"Title": "Login",
+        "CSRF": csrf.TemplateField(r),
 	}
 	render(w, r, "login.tmpl", data)
 }
@@ -91,8 +97,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		"username": "crnbrdrck",
 		"password": "password",
 	}
-	sentUsername := r.Form.Get("username")
-	sentPassword := r.Form.Get("password")
+	sentUsername := r.PostForm.Get("username")
+	sentPassword := r.PostForm.Get("password")
 
 	// Validate the sent username and password
 	if sentUsername == auth["username"] && sentPassword == auth["password"] {
@@ -146,6 +152,7 @@ func Episodes(w http.ResponseWriter, r *http.Request) {
 		"Story":    st,
 		"Episodes": episodes,
         "IsOwner": session.Values["Username"] == user.Username,
+        "CSRF": csrf.TemplateField(r),
 	}
 	render(w, r, "episode_list.tmpl", data)
 }
@@ -191,6 +198,7 @@ func UploadForm(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"Title":   "Upload an episode",
 		"Stories": getStories(session.Values["Username"].(string)),
+        "CSRF": csrf.TemplateField(r),
 	}
 	render(w, r, "upload.tmpl", data)
 }
@@ -213,14 +221,14 @@ func UploadEpisode(w http.ResponseWriter, r *http.Request) {
     }
 
     // Ensure all fields have been sent
-    if r.Form.Get("name") == "" || r.Form.Get("description") == "" || r.Form.Get("story") == "" {
+    if r.PostForm.Get("name") == "" || r.PostForm.Get("description") == "" || r.PostForm.Get("story") == "" {
         session.AddFlash("danger:All of the text fields must be filled in.")
         session.Save(r, w)
         data := map[string]interface{}{
             "Title":   "Upload an episode",
             "Stories": getStories(session.Values["Username"].(string)),
-            "Name": r.Form.Get("name"),
-            "Description": r.Form.Get("description"),
+            "Name": r.PostForm.Get("name"),
+            "Description": r.PostForm.Get("description"),
         }
         render(w, r, "upload.tmpl", data)
         return
@@ -229,15 +237,15 @@ func UploadEpisode(w http.ResponseWriter, r *http.Request) {
     // Ensure that the sent story id is valid
     st := Story{}
     dao := GetDAO()
-    err = dao.DB.Find(&st, r.Form.Get("story")).Error
+    err = dao.DB.Find(&st, r.PostForm.Get("story")).Error
     if err != nil {
         session.AddFlash("danger:Invalid Story Id.")
         session.Save(r, w)
         data := map[string]interface{}{
             "Title":   "Upload an episode",
             "Stories": getStories(session.Values["Username"].(string)),
-            "Name": r.Form.Get("name"),
-            "Description": r.Form.Get("description"),
+            "Name": r.PostForm.Get("name"),
+            "Description": r.PostForm.Get("description"),
         }
         render(w, r, "upload.tmpl", data)
         return
@@ -245,15 +253,15 @@ func UploadEpisode(w http.ResponseWriter, r *http.Request) {
 
     // Check that no other episodes have the same name in the story
     var count int
-    dao.DB.Model(&Episode{}).Where("story_id = ? AND name = ?", st.ID, r.Form.Get("name")).Count(&count)
+    dao.DB.Model(&Episode{}).Where("story_id = ? AND name = ?", st.ID, r.PostForm.Get("name")).Count(&count)
     if count > 0 {
         session.AddFlash("danger:An episode with the specified name already exists for the chosen story.")
         session.Save(r, w)
         data := map[string]interface{}{
             "Title":   "Upload an episode",
             "Stories": getStories(session.Values["Username"].(string)),
-            "Name": r.Form.Get("name"),
-            "Description": r.Form.Get("description"),
+            "Name": r.PostForm.Get("name"),
+            "Description": r.PostForm.Get("description"),
         }
         render(w, r, "upload.tmpl", data)
         return
@@ -269,8 +277,8 @@ func UploadEpisode(w http.ResponseWriter, r *http.Request) {
         data := map[string]interface{}{
             "Title":   "Upload an episode",
             "Stories": getStories(session.Values["Username"].(string)),
-            "Name": r.Form.Get("name"),
-            "Description": r.Form.Get("description"),
+            "Name": r.PostForm.Get("name"),
+            "Description": r.PostForm.Get("description"),
         }
         render(w, r, "upload.tmpl", data)
         return
@@ -284,8 +292,8 @@ func UploadEpisode(w http.ResponseWriter, r *http.Request) {
         data := map[string]interface{}{
             "Title":   "Upload an episode",
             "Stories": getStories(session.Values["Username"].(string)),
-            "Name": r.Form.Get("name"),
-            "Description": r.Form.Get("description"),
+            "Name": r.PostForm.Get("name"),
+            "Description": r.PostForm.Get("description"),
         }
         render(w, r, "upload.tmpl", data)
         return
@@ -299,8 +307,8 @@ func UploadEpisode(w http.ResponseWriter, r *http.Request) {
     number += 1
     // Create the new model
     ep := Episode{
-        Name: r.Form.Get("name"),
-        Description: strings.Split(r.Form.Get("description"), "\n"),
+        Name: r.PostForm.Get("name"),
+        Description: strings.Split(r.PostForm.Get("description"), "\n"),
         Number: number,
         StoryID: st.ID,
     }
@@ -316,8 +324,8 @@ func UploadEpisode(w http.ResponseWriter, r *http.Request) {
         data := map[string]interface{}{
             "Title":   "Upload an episode",
             "Stories": getStories(session.Values["Username"].(string)),
-            "Name": r.Form.Get("name"),
-            "Description": r.Form.Get("description"),
+            "Name": r.PostForm.Get("name"),
+            "Description": r.PostForm.Get("description"),
         }
         render(w, r, "upload.tmpl", data)
         return
