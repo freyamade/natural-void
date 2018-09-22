@@ -13,15 +13,16 @@ type DAO struct {
 var daoInstance *DAO
 var daoOnce sync.Once
 
-func GetDAO() *DAO {
+func GetDAO() (*DAO, error) {
+	var err error
 	daoOnce.Do(func() {
 		daoInstance = &DAO{}
-		err := daoInstance.new()
-		if err != nil {
-			panic(err)
-		}
+		err = daoInstance.new()
 	})
-	return daoInstance
+	if err != nil {
+		return nil, err
+	}
+	return daoInstance, nil
 }
 
 func (dao *DAO) new() error {

@@ -7,7 +7,11 @@ import (
 // Simple seed script to prepopulate the DB
 func main() {
 	// Generate a DAO
-	dao := naturalvoid.GetDAO()
+	dao, err := naturalvoid.GetDAO()
+	if err != nil {
+		panic(err)
+	}
+
 	// Get the prelim data and put it in the DB
 	// Migrate the models
 	dao.DB.AutoMigrate(&naturalvoid.User{})

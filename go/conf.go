@@ -20,20 +20,16 @@ var confOnce sync.Once
 func GetConf() *Conf {
 	confOnce.Do(func() {
 		confInstance = &Conf{}
-		err := confInstance.new()
-		if err != nil {
-			panic(err)
-		}
+		confInstance.new()
 	})
 	return confInstance
 }
 
-func (conf *Conf) new() error {
+func (conf *Conf) new() {
 	// Initialize a new Conf struct
 	// Create a gorilla session store (use Env vars)
 	key := []byte("replacethiswithanactualsecretkey") // os.GetEnv
 	production := false                               // os.GetEnv
 	conf.SessionStore = sessions.NewCookieStore(key)
 	conf.CSRF = csrf.Protect(key, csrf.Secure(production))
-	return nil
 }
