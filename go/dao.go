@@ -1,9 +1,9 @@
 package naturalvoid
 
 import (
+	"sync"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"sync"
 )
 
 type DAO struct {

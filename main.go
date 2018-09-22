@@ -1,8 +1,8 @@
 package main
 
 import (
-	"./go"
 	"net/http"
+    "./go"
 )
 
 func main() {

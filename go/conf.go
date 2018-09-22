@@ -1,11 +1,11 @@
 package naturalvoid
 
 import (
+	"net/http"
 	// "os"
+	"sync"
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/sessions"
-	"net/http"
-	"sync"
 )
 
 // Struct of configuration stuff

@@ -2,15 +2,15 @@ package naturalvoid
 
 import (
 	"fmt"
-    "os"
+	"html/template"
     "io"
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
+	"net/http"
+    "os"
+	"strings"
     "github.com/gorilla/context"
     "github.com/gorilla/csrf"
-	"html/template"
-	"net/http"
-	"strings"
+    "github.com/go-chi/chi"
+    "github.com/go-chi/chi/middleware"
 )
 
 type message struct {
