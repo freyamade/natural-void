@@ -47,3 +47,17 @@ $scheme-secondary-invert: $light-shade;
 
 All you have to do is create an scss file similar to this, name it whatever you want and save it in the `scss` folder.
 Then by running `npm run css-build`, you will get a file in `static/css` with the same name as the `scss` file you made.
+
+## Development Mode
+To develop this project further you'll need to run an LDAP and Postgres server locally.
+
+A `docker-compose.yml` file has been supplied to set these up, and by default the conf is set to use these.
+
+Run `docker-compose up -d` and also `go run seed.go` to pre-populate the test DB with some records.
+
+A user has been set up for the ldap server with the following details;
+
+- Username: `crnbrdrck`
+- Password: `password`
+
+
