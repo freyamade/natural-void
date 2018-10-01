@@ -4,8 +4,9 @@ var webpack = require('webpack')
 module.exports = {
     entry: {
         index: './typescript/index.ts',
-        listen: './typescript/listen.ts',
         menu: './typescript/menu.ts',
+        listen: './typescript/listen.ts',
+        sw: './typescript/sw.ts',
         upload: './typescript/upload.ts'
     },
     output: {

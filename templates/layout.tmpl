@@ -54,15 +54,15 @@
         </div>
       </header>
     </div>
-    {{if .Messages}}
-    <div class="container">
+    <div class="container" id="notif-center">
+      {{if .Messages}}
       {{range .Messages}}
       <div class="notification is-{{.Type}}">
         {{.Text}}
       </div>
       {{end}}
+      {{end}}
     </div>
-    {{end}}
     {{block "content" .}}{{end}}
   </section>
   {{block "longContent" .}}{{end}}
