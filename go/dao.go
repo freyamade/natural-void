@@ -27,7 +27,7 @@ func GetDAO() (*DAO, error) {
 
 func (dao *DAO) new() error {
 	// Initialize a new DAO object
-	db, err := gorm.Open("postgres", "host=localhost port=5432 user=postgres dbname=postgres sslmode=disable")
+	db, err := gorm.Open("postgres", "host=localhost port=5432 user=postgres dbname=postgres password=postgres sslmode=disable")
 	if err != nil {
 		return err
 	}

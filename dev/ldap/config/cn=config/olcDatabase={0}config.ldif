@@ -1,0 +1,16 @@
+# AUTO-GENERATED FILE - DO NOT EDIT!! Use ldapmodify.
+# CRC32 5f8c77cb
+dn: olcDatabase={0}config
+objectClass: olcDatabaseConfig
+olcDatabase: {0}config
+olcAccess: {0}to * by dn.exact=gidNumber=0+uidNumber=0,cn=peercred,cn=extern
+ al,cn=auth manage by * break
+olcRootDN: cn=admin,cn=config
+structuralObjectClass: olcDatabaseConfig
+entryUUID: f9934f02-5a1b-1038-9359-0d1ca908e417
+creatorsName: cn=config
+createTimestamp: 20181001231756Z
+olcRootPW:: e1NTSEF9c2VKTGg1YlNOb25aQkRiZU1uRlNzSlZXcXpScW9HTWE=
+entryCSN: 20181001231758.624640Z#000000#000#000000
+modifiersName: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
+modifyTimestamp: 20181001231758Z
