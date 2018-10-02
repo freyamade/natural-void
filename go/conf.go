@@ -2,12 +2,12 @@ package naturalvoid
 
 import (
 	"fmt"
+	"github.com/gorilla/csrf"
+	"github.com/gorilla/sessions"
 	"net/http"
 	"os"
 	"strconv"
 	"sync"
-	"github.com/gorilla/csrf"
-	"github.com/gorilla/sessions"
 )
 
 // Struct of configuration stuff
@@ -15,18 +15,18 @@ type Conf struct {
 	SessionStore *sessions.CookieStore
 	CSRF         func(http.Handler) http.Handler
 	// Database stuff
-	DBHost       string
-	DBPort       int
-	DBUser       string
-	DBPass       string
-	DBName       string
-	DBSecure     string
+	DBHost   string
+	DBPort   int
+	DBUser   string
+	DBPass   string
+	DBName   string
+	DBSecure string
 	// LDAP Stuff
-	LDAPHost     string
-	LDAPPort     int
-	LDAPUser     string
-	LDAPPass     string
-	LDAPSecure   bool
+	LDAPHost   string
+	LDAPPort   int
+	LDAPUser   string
+	LDAPPass   string
+	LDAPSecure bool
 }
 
 var confInstance *Conf
@@ -82,9 +82,9 @@ func (conf *Conf) new() {
 
 // Helper to provide a default for getting environment variables
 func getEnv(key, fallback string) string {
-    value := os.Getenv(key)
-    if len(value) == 0 {
-        return fallback
-    }
-    return value
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return fallback
+	}
+	return value
 }
