@@ -1,11 +1,13 @@
 package naturalvoid
 
 import (
+	"errors"
 	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/gorilla/context"
 	"github.com/gorilla/csrf"
+	"github.com/go-ldap/ldap"
 	"html/template"
 	"io"
 	"net/http"
@@ -109,13 +111,22 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		render(w, r, "login.tmpl", data)
 		return
 	}
-	// Create some sample login data for now until I can add LDAP later
-
+	// Attempt to login to the LDAP server
 	sentUsername := r.PostForm.Get("username")
 	sentPassword := r.PostForm.Get("password")
+	data["Username"] = sentUsername
 
 	// Validate the sent username and password
-	if sentUsername == auth["username"] && sentPassword == auth["password"] {
+	ok, err := isValidAuth(sentUsername, sentPassword)
+	if err != nil {
+		fmt.Println(err)
+		session.AddFlash("warning:Error during LDAP verification. Please try again later.")
+		session.Save(r, w)
+		render(w, r, "login.tmpl", data)
+		return
+	}
+
+	if ok {
 		session.Values["Authenticated"] = true
 		session.Values["Username"] = sentUsername
 		session.AddFlash("success:You have logged in successfully!")
@@ -126,7 +137,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		session.AddFlash("danger:Invalid username or password. Please check your details and try again.")
 		session.Save(r, w)
 		data["Username"] = sentUsername
-		}
 		render(w, r, "login.tmpl", data)
 	}
 }
@@ -579,3 +589,45 @@ func getStories(username string) ([]Story, error) {
 	dao.DB.Where("user_id = ?", user.ID).Find(&stories)
 	return stories, nil
 }
+
+// Check the passed username and password against the LDAP DB
+func isValidAuth(username string, password string) (bool, error) {
+	conf := GetConf()
+	// Connect to the LDAP server
+	l, err := ldap.Dial("tcp", fmt.Sprintf("%s:%d", conf.LDAPHost, conf.LDAPPort))
+	if err != nil {
+		return false, err
+	}
+	defer l.Close()
+
+	// Bind as the user in the conf
+	err = l.Bind(conf.LDAPUser, conf.LDAPPass)
+	if err != nil {
+		return false, err
+	}
+
+	// Search for the given username
+	filter := fmt.Sprintf("(&(cn=%s))", username)
+	searchRequest := ldap.NewSearchRequest("dc=naturalvoid,dc=com", ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false, filter, []string{"dn"}, nil)
+
+	search, err := l.Search(searchRequest)
+	if err != nil {
+		return false, err
+	}
+
+	// Check that only one entry has been returned
+	if len(search.Entries) != 1 {
+		return false, errors.New("User either does not exist or returned more than 1 LDAP entry")
+	}
+
+	// Get the DN of the user and attempt to bind as that user to see if the password is valid
+	userDN := search.Entries[0].DN
+	err = l.Bind(userDN, password)
+	if err != nil {
+		return false, err
+	}
+
+	// If we make it here, the auth is valid
+	return true, nil
+}
+
