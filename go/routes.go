@@ -54,19 +54,19 @@ func NewRouter() chi.Router {
 // Define Route Handlers here
 func Index(w http.ResponseWriter, r *http.Request) {
 	// Get the list of Stories from the DB
-    data := map[string]interface{}{}
+	data := map[string]interface{}{}
 	dao, err := GetDAO()
-    if err != nil {
-        fmt.Println(err)
-        conf := GetConf()
-        session, _ := conf.SessionStore.Get(r, "session")
-        session.AddFlash("warning:Could not connect to database!")
-        session.Save(r, w)
-    } else {
-    	stories := []Story{}
-    	dao.DB.Find(&stories)
-    	data["Stories"] = stories
-    }
+	if err != nil {
+		fmt.Println(err)
+		conf := GetConf()
+		session, _ := conf.SessionStore.Get(r, "session")
+		session.AddFlash("warning:Could not connect to database!")
+		session.Save(r, w)
+	} else {
+		stories := []Story{}
+		dao.DB.Find(&stories)
+		data["Stories"] = stories
+	}
 	render(w, r, "index.tmpl", data)
 }
 
@@ -85,7 +85,7 @@ func LoginForm(w http.ResponseWriter, r *http.Request) {
 	// Get the CSRF token
 	data := map[string]interface{}{
 		"CSRF":  csrf.TemplateField(r),
-        "Title": "Login",
+		"Title": "Login",
 	}
 	render(w, r, "login.tmpl", data)
 }
@@ -99,16 +99,16 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// Attempt to parse the form
 	err := r.ParseForm()
 	if err != nil {
-        fmt.Println(err)
+		fmt.Println(err)
 		session.AddFlash("warning:Could not parse form. Try again later.")
-        session.Save(r, w)
-        render(w, r, "login.tmpl", map[string]interface{}{})
-        return
+		session.Save(r, w)
+		render(w, r, "login.tmpl", map[string]interface{}{})
+		return
 	}
 	// Create some sample login data for now until I can add LDAP later
 	auth := map[string]string{
 		"password": "password",
-        "username": "crnbrdrck",
+		"username": "crnbrdrck",
 	}
 	sentUsername := r.PostForm.Get("username")
 	sentPassword := r.PostForm.Get("password")
@@ -125,8 +125,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		session.AddFlash("danger:Invalid username or password. Please check your details and try again.")
 		session.Save(r, w)
 		data := map[string]interface{}{
-            "CSRF":  csrf.TemplateField(r),
-            "Title":    "Login",
+			"CSRF":     csrf.TemplateField(r),
+			"Title":    "Login",
 			"Username": sentUsername,
 		}
 		render(w, r, "login.tmpl", data)
@@ -153,33 +153,33 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 // Show the list of episodes in order of newest first
 func Episodes(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
-        "CSRF": csrf.TemplateField(r),
-    }
+		"CSRF": csrf.TemplateField(r),
+	}
 
-    dao, err := GetDAO()
-    if err != nil {
-        fmt.Println(err)
-        conf := GetConf()
-        session, _ := conf.SessionStore.Get(r, "session")
-        session.AddFlash("warning:Could not connect to database!")
-        session.Save(r, w)
-        data["Title"] = "Episodes"
-    } else {
-        storyID := chi.URLParam(r, "story")
-        st := Story{}
-        user := User{}
-        episodes := []Episode{}
+	dao, err := GetDAO()
+	if err != nil {
+		fmt.Println(err)
+		conf := GetConf()
+		session, _ := conf.SessionStore.Get(r, "session")
+		session.AddFlash("warning:Could not connect to database!")
+		session.Save(r, w)
+		data["Title"] = "Episodes"
+	} else {
+		storyID := chi.URLParam(r, "story")
+		st := Story{}
+		user := User{}
+		episodes := []Episode{}
 
-        dao.DB.Find(&st, storyID).Related(&user)
-        dao.DB.Order("number DESC").Find(&episodes)
-        conf := GetConf()
-        session, _ := conf.SessionStore.Get(r, "session")
+		dao.DB.Find(&st, storyID).Related(&user)
+		dao.DB.Order("number DESC").Find(&episodes)
+		conf := GetConf()
+		session, _ := conf.SessionStore.Get(r, "session")
 
-        data["Title"] = fmt.Sprintf("%s Episodes", st.Name)
-        data["Story"] = st
-        data["Episodes"] = episodes
-        data["IsOwner"] = session.Values["Username"] == user.Username
-    }
+		data["Title"] = fmt.Sprintf("%s Episodes", st.Name)
+		data["Story"] = st
+		data["Episodes"] = episodes
+		data["IsOwner"] = session.Values["Username"] == user.Username
+	}
 	render(w, r, "episode_list.tmpl", data)
 }
 
@@ -187,53 +187,53 @@ func Episodes(w http.ResponseWriter, r *http.Request) {
 func Listen(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{}
 
-    dao, err := GetDAO()
-    if err != nil {
-        fmt.Println(err)
-        conf := GetConf()
-        session, _ := conf.SessionStore.Get(r, "session")
-        session.AddFlash("warning:Could not connect to database!")
-        session.Save(r, w)
-        data["Title"] = "Listen to Natural Void"
-    } else {
-        st := Story{}
-        ep := Episode{}
-        storyID := chi.URLParam(r, "story")
-        episode := chi.URLParam(r, "episode")
-        dao.DB.Find(&st, storyID)
-        dao.DB.Where("story_id = ? AND number = ?", storyID, episode).Find(&ep)
+	dao, err := GetDAO()
+	if err != nil {
+		fmt.Println(err)
+		conf := GetConf()
+		session, _ := conf.SessionStore.Get(r, "session")
+		session.AddFlash("warning:Could not connect to database!")
+		session.Save(r, w)
+		data["Title"] = "Listen to Natural Void"
+	} else {
+		st := Story{}
+		ep := Episode{}
+		storyID := chi.URLParam(r, "story")
+		episode := chi.URLParam(r, "episode")
+		dao.DB.Find(&st, storyID)
+		dao.DB.Where("story_id = ? AND number = ?", storyID, episode).Find(&ep)
 
-        // Get next and previous episodes if they exist
-        prev := Episode{}
-        next := Episode{}
-        dao.DB.Where("number = ? AND story_id = ?", (ep.Number - 1), storyID).First(&prev)
-        dao.DB.Where("number = ? AND story_id = ?", (ep.Number + 1), storyID).First(&next)
+		// Get next and previous episodes if they exist
+		prev := Episode{}
+		next := Episode{}
+		dao.DB.Where("number = ? AND story_id = ?", (ep.Number - 1), storyID).First(&prev)
+		dao.DB.Where("number = ? AND story_id = ?", (ep.Number + 1), storyID).First(&next)
 
-        data["Title"] = fmt.Sprintf("Listen to %s", ep.Name)
-        data["Episode"] = ep
-        data["Story"] = st
-        data["Prev"] = prev
-        data["Next"] = next
-    }
+		data["Title"] = fmt.Sprintf("Listen to %s", ep.Name)
+		data["Episode"] = ep
+		data["Story"] = st
+		data["Prev"] = prev
+		data["Next"] = next
+	}
 	render(w, r, "listen.tmpl", data)
 }
 
 // Show the page where a User who is a DM can upload an episode of a story
 func UploadForm(w http.ResponseWriter, r *http.Request) {
-    data := map[string]interface{}{
-        "CSRF":    csrf.TemplateField(r),
-        "Title":   "Upload an episode",
-    }
+	data := map[string]interface{}{
+		"CSRF":  csrf.TemplateField(r),
+		"Title": "Upload an episode",
+	}
 
 	conf := GetConf()
 	session, _ := conf.SessionStore.Get(r, "session")
-    isDM, err := isDM(session.Values["Username"].(string))
-    if err != nil {
-        session.AddFlash("warning:Could not connect to database!")
-        session.Save(r, w)
-        render(w, r, "upload.tmpl", data)
-        return
-    }
+	isDM, err := isDM(session.Values["Username"].(string))
+	if err != nil {
+		session.AddFlash("warning:Could not connect to database!")
+		session.Save(r, w)
+		render(w, r, "upload.tmpl", data)
+		return
+	}
 
 	if !(session.Values["Authenticated"] == true) && !(isDM) {
 		// Redirect to the index with an error message
@@ -243,37 +243,37 @@ func UploadForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    stories, err := getStories(session.Values["Username"].(string))
-    if err != nil {
-        session.AddFlash("warning:Could not connect to database!")
-        session.Save(r, w)
-        render(w, r, "upload.tmpl", data)
-        return
-    }
+	stories, err := getStories(session.Values["Username"].(string))
+	if err != nil {
+		session.AddFlash("warning:Could not connect to database!")
+		session.Save(r, w)
+		render(w, r, "upload.tmpl", data)
+		return
+	}
 
 	// Display a form allowing the user to upload an episode
-    data["Stories"] = stories
+	data["Stories"] = stories
 	render(w, r, "upload.tmpl", data)
 }
 
 // Handle the uploading of an Episode into the DB
 func UploadEpisode(w http.ResponseWriter, r *http.Request) {
-    data := map[string]interface{}{
-        "CSRF":    csrf.TemplateField(r),
-        "Title":   "Upload an episode",
-    }
+	data := map[string]interface{}{
+		"CSRF":  csrf.TemplateField(r),
+		"Title": "Upload an episode",
+	}
 
 	conf := GetConf()
 	session, _ := conf.SessionStore.Get(r, "session")
 	isDM, err := isDM(session.Values["Username"].(string))
-    if err != nil {
-        session.AddFlash("warning:Could not connect to database!")
-        session.Save(r, w)
-        render(w, r, "upload.tmpl", data)
-        return
-    }
+	if err != nil {
+		session.AddFlash("warning:Could not connect to database!")
+		session.Save(r, w)
+		render(w, r, "upload.tmpl", data)
+		return
+	}
 
-    if !(session.Values["Authenticated"] == true) && !(isDM) {
+	if !(session.Values["Authenticated"] == true) && !(isDM) {
 		// Redirect to the index with an error message
 		session.AddFlash("danger:You must be logged in and be running a story to access this page.")
 		session.Save(r, w)
@@ -281,37 +281,37 @@ func UploadEpisode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    // Get the user's stories
-    stories, err := getStories(session.Values["Username"].(string))
-    if err != nil {
-        session.AddFlash("warning:Could not connect to database!")
-        session.Save(r, w)
-        render(w, r, "upload.tmpl", data)
-        return
-    }
-    data["Stories"] = stories
+	// Get the user's stories
+	stories, err := getStories(session.Values["Username"].(string))
+	if err != nil {
+		session.AddFlash("warning:Could not connect to database!")
+		session.Save(r, w)
+		render(w, r, "upload.tmpl", data)
+		return
+	}
+	data["Stories"] = stories
 
 	// Parse the form and check for valid params
 	err = r.ParseMultipartForm(32 << 20)
 	if err != nil {
 		fmt.Println(err)
-        session.AddFlash("warning:Error occurred when parsing the form, try again later!")
-        session.Save(r, w)
-        render(w, r, "upload.tmpl", data)
-        return
+		session.AddFlash("warning:Error occurred when parsing the form, try again later!")
+		session.Save(r, w)
+		render(w, r, "upload.tmpl", data)
+		return
 	}
-    data["Name"] = r.PostForm.Get("name")
-    data["Description"] = r.PostForm.Get("description")
+	data["Name"] = r.PostForm.Get("name")
+	data["Description"] = r.PostForm.Get("description")
 
-    // Attempt to connect to the DB
-    dao, err := GetDAO()
-    if err != nil {
-        fmt.Println(err)
-        session.AddFlash("warning:Could not connect to database!")
-        session.Save(r, w)
-        render(w, r, "upload.tmpl", data)
-        return
-    }
+	// Attempt to connect to the DB
+	dao, err := GetDAO()
+	if err != nil {
+		fmt.Println(err)
+		session.AddFlash("warning:Could not connect to database!")
+		session.Save(r, w)
+		render(w, r, "upload.tmpl", data)
+		return
+	}
 
 	// Ensure all fields have been sent
 	if r.PostForm.Get("name") == "" || r.PostForm.Get("description") == "" || r.PostForm.Get("story") == "" {
@@ -321,7 +321,7 @@ func UploadEpisode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    // Validate the story id
+	// Validate the story id
 	st := Story{}
 	err = dao.DB.Find(&st, r.PostForm.Get("story")).Error
 	if err != nil {
@@ -398,21 +398,21 @@ func UploadEpisode(w http.ResponseWriter, r *http.Request) {
 func DeleteEpisode(w http.ResponseWriter, r *http.Request) {
 	conf := GetConf()
 	session, _ := conf.SessionStore.Get(r, "session")
-    storyID := chi.URLParam(r, "story")
-    // Attempt to connect to the DB
+	storyID := chi.URLParam(r, "story")
+	// Attempt to connect to the DB
 	dao, err := GetDAO()
-    if err != nil {
-        fmt.Println(err)
-        session.AddFlash("warning:Could not connect to database!")
-        session.Save(r, w)
-        http.Redirect(w, r, fmt.Sprintf("/story/%d/", storyID), 303)
-        return
-    }
+	if err != nil {
+		fmt.Println(err)
+		session.AddFlash("warning:Could not connect to database!")
+		session.Save(r, w)
+		http.Redirect(w, r, fmt.Sprintf("/story/%d/", storyID), 303)
+		return
+	}
 
-    user := User{}
-    st := Story{}
-    ep := Episode{}
-    episode := chi.URLParam(r, "episode")
+	user := User{}
+	st := Story{}
+	ep := Episode{}
+	episode := chi.URLParam(r, "episode")
 
 	// Delete the episode from the DB and also delete the episode file from the file system
 	err = dao.DB.Find(&st, storyID).Related(&user).Error
@@ -486,7 +486,7 @@ func render(w http.ResponseWriter, r *http.Request, name string, data map[string
 	// Check whether or not the current user is a DM for a story
 	if session.Values["Authenticated"] == true {
 		// Check if they have any stories
-        isDM, _ := isDM(session.Values["Username"].(string))  // Ignore error here in case we double post the same message
+		isDM, _ := isDM(session.Values["Username"].(string)) // Ignore error here in case we double post the same message
 		data["IsDM"] = isDM
 	}
 
@@ -560,9 +560,9 @@ func fileServer(r chi.Router, path string, root http.FileSystem) {
 func isDM(username string) (bool, error) {
 	user := User{}
 	dao, err := GetDAO()
-    if err != nil {
-        return false, err
-    }
+	if err != nil {
+		return false, err
+	}
 	dao.DB.Where("username = ?", username).Find(&user)
 	var count uint
 	dao.DB.Model(&Story{}).Where("user_id = ?", user.ID).Count(&count)
@@ -573,9 +573,9 @@ func isDM(username string) (bool, error) {
 func getStories(username string) ([]Story, error) {
 	user := User{}
 	dao, err := GetDAO()
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 	dao.DB.Where("username = ?", username).Find(&user)
 	stories := []Story{}
 	dao.DB.Where("user_id = ?", user.ID).Find(&stories)
