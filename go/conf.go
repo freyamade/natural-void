@@ -2,12 +2,12 @@ package naturalvoid
 
 import (
 	"fmt"
-	"github.com/gorilla/csrf"
-	"github.com/gorilla/sessions"
 	"net/http"
 	"os"
 	"strconv"
 	"sync"
+	"github.com/gorilla/csrf"
+	"github.com/gorilla/sessions"
 )
 
 // Struct of configuration stuff

@@ -2,10 +2,10 @@ package naturalvoid
 
 import (
 	"bytes"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"sync"
 	"text/template"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 type DAO struct {
