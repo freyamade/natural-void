@@ -5,6 +5,66 @@ That being said, I'll be making it as easy as possible for others to use so feel
 
 Made with Go, Bulma, TypeScript and &lt;3
 
+## Environment Variables
+The following environment variables are used in the configuration of the system;
+
+### Postgres
+- `POSTGRES_HOST`
+    - The host name of the postgres server
+    - Defaults to `localhost`
+- `POSTGRES_PORT`
+    - The port of the postgres server
+    - Defaults to `5432`
+- `POSTGRES_USER`
+    - The username used to connect to postgres
+    - Defaults to `postgres`
+- `POSTGRES_PASS`
+    - The password used to authenticate the postgres user
+    - Defaults to `postgres`
+- `POSTGRES_NAME`
+    - This name of the database being used for the system
+    - Defaults to `postgres`
+- `POSTGRES_SECURE`
+    - Flag stating whether or not the connection to postgres should be done with SSL
+    - Defaults to `false`
+
+### LDAP
+- `LDAP_HOST`
+    - The host name of the ldap server
+    - Defaults to `localhost`
+- `LDAP_PORT`
+    - The port of the ldap server
+    - Defaults to `389`
+- `LDAP_USER`
+    - The username used to connect to ldap
+    - Defaults to `cn=admin,dc=naturalvoid,dc=com`
+- `LDAP_PASS`
+    - The password used to authenticate the ldap user
+    - Defaults to `nv`
+- `LDAP_SECURE`
+    - Flag stating whether or not the connection to ldap should be done with SSL
+    - Defaults to `false`
+
+### Other
+- `SECRET_KEY`
+    - This is used to generate a secret key for secrets
+    - Defaults to `replacethiswithanactualsecretkey`
+- `PRODUCTION`
+    - A flag stating whether or not the server is being run in a production environment
+    - Defaults to `false`
+
+## Development Mode
+To develop this project further you'll need to run an LDAP and Postgres server locally.
+
+A `docker-compose.yml` file has been supplied to set these up, and by default the conf is set to use these.
+
+Run `docker-compose up -d` and also `go run seed.go` to pre-populate the test DB with some records.
+
+A user has been set up for the ldap server with the following details;
+
+- Username: `crnbrdrck`
+- Password: `password`
+
 ## Custom Colouring
 It is completely possible to customize the colour scheme for the website by adding a very basic scss file.
 
@@ -47,17 +107,3 @@ $scheme-secondary-invert: $light-shade;
 
 All you have to do is create an scss file similar to this, name it whatever you want and save it in the `scss` folder.
 Then by running `npm run css-build`, you will get a file in `static/css` with the same name as the `scss` file you made.
-
-## Development Mode
-To develop this project further you'll need to run an LDAP and Postgres server locally.
-
-A `docker-compose.yml` file has been supplied to set these up, and by default the conf is set to use these.
-
-Run `docker-compose up -d` and also `go run seed.go` to pre-populate the test DB with some records.
-
-A user has been set up for the ldap server with the following details;
-
-- Username: `crnbrdrck`
-- Password: `password`
-
-

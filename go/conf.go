@@ -69,7 +69,7 @@ func (conf *Conf) new() {
 
 	// LDAP Stuff
 	conf.LDAPHost = getEnv("LDAP_HOST", "localhost")
-	ldapPort, err := strconv.Atoi(getEnv("LDAP_PORT", "5432"))
+	ldapPort, err := strconv.Atoi(getEnv("LDAP_PORT", "389"))
 	if err != nil {
 		fmt.Println("Invalid LDAP Port value, not an integer.")
 		panic(err)
