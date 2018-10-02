@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-ldap/ldap"
 	"github.com/gorilla/context"
 	"github.com/gorilla/csrf"
-	"github.com/go-ldap/ldap"
 	"html/template"
 	"io"
 	"net/http"
@@ -96,8 +96,8 @@ func LoginForm(w http.ResponseWriter, r *http.Request) {
 func Login(w http.ResponseWriter, r *http.Request) {
 	// Store important things in the session
 	data := map[string]interface{}{
-		"CSRF":     csrf.TemplateField(r),
-		"Title":    "Login",
+		"CSRF":  csrf.TemplateField(r),
+		"Title": "Login",
 	}
 	conf := GetConf()
 	session, _ := conf.SessionStore.Get(r, "session")
@@ -630,4 +630,3 @@ func isValidAuth(username string, password string) (bool, error) {
 	// If we make it here, the auth is valid
 	return true, nil
 }
-
