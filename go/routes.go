@@ -93,6 +93,10 @@ func LoginForm(w http.ResponseWriter, r *http.Request) {
 // Handle logging in of a user by checking against LDAP
 func Login(w http.ResponseWriter, r *http.Request) {
 	// Store important things in the session
+	data := map[string]interface{}{
+		"CSRF":     csrf.TemplateField(r),
+		"Title":    "Login",
+	}
 	conf := GetConf()
 	session, _ := conf.SessionStore.Get(r, "session")
 	// Attempt to auth the user
@@ -102,7 +106,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		session.AddFlash("warning:Could not parse form. Try again later.")
 		session.Save(r, w)
-		render(w, r, "login.tmpl", map[string]interface{}{})
+		render(w, r, "login.tmpl", data)
 		return
 	}
 	// Create some sample login data for now until I can add LDAP later
@@ -121,10 +125,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		// Re-render the login form with an error message
 		session.AddFlash("danger:Invalid username or password. Please check your details and try again.")
 		session.Save(r, w)
-		data := map[string]interface{}{
-			"CSRF":     csrf.TemplateField(r),
-			"Title":    "Login",
-			"Username": sentUsername,
+		data["Username"] = sentUsername
 		}
 		render(w, r, "login.tmpl", data)
 	}
