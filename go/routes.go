@@ -106,10 +106,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Create some sample login data for now until I can add LDAP later
-	auth := map[string]string{
-		"password": "password",
-		"username": "crnbrdrck",
-	}
+
 	sentUsername := r.PostForm.Get("username")
 	sentPassword := r.PostForm.Get("password")
 
