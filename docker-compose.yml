@@ -1,0 +1,24 @@
+version: '3'
+services:
+  ldap:
+    image: osixia/openldap
+    container_name: natural-void-ldap
+    ports:
+      - 389:389
+    environment:
+      LDAP_ADMIN_PASSWORD: nv
+      LDAP_CONFIG_PASSWORD: nv
+      LDAP_DOMAIN: naturalvoid.com
+      LDAP_TLS: 'false'
+      LDAP_REPLICATION: 'false'
+    volumes:
+      - './dev/ldap/database:/var/lib/ldap'
+      - './dev/ldap/config:/etc/ldap/slapd.d'
+  db:
+    image: postgres
+    container_name: natural-void-pgsql
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres

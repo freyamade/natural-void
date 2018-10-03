@@ -1,9 +1,11 @@
 package naturalvoid
 
 import (
+	"bytes"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"sync"
+	"text/template"
 )
 
 type DAO struct {
@@ -26,8 +28,16 @@ func GetDAO() (*DAO, error) {
 }
 
 func (dao *DAO) new() error {
+	confString := "host={{.DBHost}} port={{.DBPort}} user={{.DBUser}} dbname={{.DBName}} password={{.DBPass}} sslmode={{.DBSecure}}"
+	conf := GetConf()
+	t, err := template.New("conf").Parse(confString)
+	var buffer bytes.Buffer
+	err = t.Execute(&buffer, conf)
+	if err != nil {
+		panic(err)
+	}
 	// Initialize a new DAO object
-	db, err := gorm.Open("postgres", "host=localhost port=5432 user=postgres dbname=postgres sslmode=disable")
+	db, err := gorm.Open("postgres", buffer.String())
 	if err != nil {
 		return err
 	}
