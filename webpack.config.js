@@ -6,7 +6,7 @@ module.exports = {
         index: './typescript/index.ts',
         menu: './typescript/menu.ts',
         listen: './typescript/listen.ts',
-        sw: './typescript/sw.ts',
+        // sw: './typescript/sw.ts',
         upload: './typescript/upload.ts'
     },
     output: {
