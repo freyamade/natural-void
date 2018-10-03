@@ -3,7 +3,8 @@
 # TS
 node_modules
 built
-static
+static/js
+static/css
 
 # Other
 episodes/**/*
