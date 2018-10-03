@@ -4,6 +4,6 @@ export class Alert {
         notif.classList.add('notification', `is-${type}`);
         const text = document.createTextNode(message);
         notif.appendChild(text);
-        document.getElementById('notif-center').append(notif);
+        document.getElementById('notif-center')!.appendChild(notif);
     }
 }

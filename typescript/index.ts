@@ -14,6 +14,6 @@ for (let i = 0; i < tabs.length; i ++) {
 }
 
 // Register service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/static/js/sw.js');
-}
+// if ('serviceWorker' in navigator) {
+//   navigator.serviceWorker.register('/static/js/sw.js');
+// }
