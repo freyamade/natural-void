@@ -21,6 +21,7 @@
 
 {{define "longContent"}}
 {{$story := .Story}}
+{{$csrf := .CSRF}}
 {{$isOwner := .IsOwner}}
 {{range .Episodes}}
 <hr class="has-background-scheme-secondary" />
@@ -31,7 +32,7 @@
   {{end}}
   <a href="/episode/{{$story.ID}}/{{.Number}}/" class="button is-scheme-secondary">Listen</a>
   {{if $isOwner}}
-  <form action="/episode/{{$story.ID}}/{{.Number}}/delete/" method="POST">{{.CSRF}}<input type="submit" class="button is-danger" value="Delete Episode" /></form>
+  <form action="/episode/{{$story.ID}}/{{.Number}}/delete/" method="POST">{{$csrf}}<input type="submit" class="button is-danger" value="Delete Episode" /></form>
   {{end}}
 </section>
 {{end}}
