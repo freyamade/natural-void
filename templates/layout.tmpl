@@ -8,7 +8,7 @@
     <meta name="description" content="A D&amp;D podcast by the people of Exceptional Void, for the people of Exceptional Void. Come recount the tales of the stories recorded (almost) every week in our Discord server." />
     <title>Natural Void ⚄ {{if .Title}} {{.Title}} {{ else }}The Exceptional D&amp;D Podcast{{end}}</title>
     <link rel="stylesheet" href="/static/css/{{.Style}}.css" />
-    <link rel="shortcut icon" href="/static/favicon.ico" />
+    <link rel="shortcut icon" href="/static/img/favicon.ico" />
     <link rel="manifest" href="/manifest/" />
     <meta name="theme-color" content="{{.Theme}}" />
   </head>
@@ -54,15 +54,15 @@
         </div>
       </header>
     </div>
-    {{if .Messages}}
-    <div class="container">
+    <div class="container" id="notif-center">
+      {{if .Messages}}
       {{range .Messages}}
       <div class="notification is-{{.Type}}">
         {{.Text}}
       </div>
       {{end}}
+      {{end}}
     </div>
-    {{end}}
     {{block "content" .}}{{end}}
   </section>
   {{block "longContent" .}}{{end}}
