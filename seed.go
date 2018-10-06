@@ -1,7 +1,9 @@
+// +build ignore
+
 package main
 
 import (
-	"./go"
+	"github.com/crnbrdrck/natural-void/go"
 )
 
 // Simple seed script to prepopulate the DB

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./go"
+	"github.com/crnbrdrck/natural-void/go"
 	"net/http"
 )
 
