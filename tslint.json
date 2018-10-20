@@ -13,7 +13,7 @@
           {
             "call-signature": "onespace",
             "index-signature": "onespace",
-            "parameter": "onespace",
+            "parameter": "nospace",
             "property-declaration": "onespace",
             "variable-declaration": "onespace"
           },

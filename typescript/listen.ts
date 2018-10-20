@@ -1,32 +1,33 @@
 import Amplitude from 'amplitudejs'
 
-interface Colours {
-  primary: string
-  secondary: string
+interface IColours {
+  primary : string
+  secondary : string
 }
 
-function getSchemeColours(): Colours {
+function getSchemeColours() : IColours {
   // The scheme colours can be retrieved from the hero and the border colour of the title
-  let primary, secondary: string
-  primary = getComputedStyle(document.querySelector('.hero.is-scheme-primary')!).backgroundColor
+  let primary : string
+  let secondary : string
+  primary = getComputedStyle(document.querySelector('.hero.is-scheme-primary')!).backgroundColor!
   secondary = getComputedStyle(document.querySelector('.listen-title')!).borderBottomColor!
-  return {primary: primary, secondary: secondary}
+  return {primary, secondary}
 }
 
-async function loadEpisode(): Promise<void> {
+async function loadEpisode() : Promise<void> {
   // Get the episode id
   const dataset = (document.querySelector('#player-container')! as HTMLElement).dataset
   const episodeNum = dataset.episodeNum!
   const storyId = dataset.storyId
   // Get the colours of the scheme
-  const colours: Colours = getSchemeColours()
+  const colours : IColours = getSchemeColours()
   Amplitude.init({
     bindings: {
       32: 'play_pause',
     },
     songs: [{
       url: `/episodes/${storyId}/${episodeNum}`,
-    }]
+    }],
   })
 
   // Allow for clicking to move around on the progress bar

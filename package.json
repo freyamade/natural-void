@@ -8,7 +8,7 @@
     "css-watch": "npm run css-build -- --watch",
     "build": "npm run css-build && webpack --mode production",
     "watch": "webpack --watch",
-    "lint": "tslint 'src/**/*.ts'",
+    "lint": "tslint 'typescript/**/*.ts'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

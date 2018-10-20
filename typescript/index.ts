@@ -9,8 +9,8 @@ function tabChange(e: Event) {
 }
 
 const tabs = document.querySelectorAll('.hero-foot .tabs a')
-for (let i = 0 i < tabs.length; i ++) {
-  tabs[i].addEventListener('click', tabChange, false)
+for (const tab of tabs) {
+  tab.addEventListener('click', tabChange, false)
 }
 
 // Register service worker
