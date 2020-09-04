@@ -32,7 +32,7 @@
   "devDependencies": {
     "amplitudejs": "^3.3.1",
     "bulma": "^0.7.1",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.13.1",
     "ts-loader": "^5.1.0",
     "tslint": "^5.11.0",
     "typescript": "^3.0.3",
